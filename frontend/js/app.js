@@ -127,12 +127,11 @@
 
   // ---------------------------------------------------------------- bootstrap
   async function boot() {
-    T.icon && document.getElementById("brand-logo").insertAdjacentHTML("beforeend", T.icon("scale", "lg").s);
     try {
       T.state.health = await T.api.get("/api/health");
       T.state.session = await T.api.get("/api/sessions/latest");
     } catch (e) {
-      document.getElementById("page").innerHTML = T.empty("Backend not reachable", e.message + " Start it with ./run.sh (or run.bat) and reload.").s; return;
+      document.getElementById("page").innerHTML = T.empty("Backend not reachable", e.message + " Activate the venv and run: uvicorn app.main:app --host 127.0.0.1 --port 8000").s; return;
     }
     window.addEventListener("hashchange", () => { T.drawer.close(true); T.render(); });
     if (!location.hash) location.hash = "#/dashboard"; else T.render();
@@ -140,4 +139,21 @@
     if (S && S.status === "running") T.attach(S.id, 0, S.mode, S.settings);
   }
   boot();
+
+  // ---------------------------------------------------------------- sidebar toggle
+  (function initSidebarToggle() {
+    const btn = document.getElementById('side-toggle');
+    if (!btn) return;
+    const STORE_KEY = 'themis_side_collapsed';
+    // Restore persisted state before first paint
+    if (localStorage.getItem(STORE_KEY) === '1') {
+      document.body.classList.add('side-collapsed');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+    btn.addEventListener('click', () => {
+      const collapsed = document.body.classList.toggle('side-collapsed');
+      btn.setAttribute('aria-expanded', String(!collapsed));
+      localStorage.setItem(STORE_KEY, collapsed ? '1' : '0');
+    });
+  })();
 })();

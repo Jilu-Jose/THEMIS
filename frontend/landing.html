@@ -1,0 +1,347 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_standard" name="shell-type"><title>THEMIS | Autonomous Tender Evaluation Enclave</title><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"primary-fixed":"#dce1ff","outline":"#757682","error-container":"#ffdad6","on-secondary-fixed":"#00174b","tertiary":"#222a3e","outline-variant":"#c5c5d3","surface-container-high":"#dce9ff","surface-container-lowest":"#ffffff","on-primary":"#ffffff","on-secondary":"#ffffff","on-primary-fixed":"#00164e","surface-variant":"#d3e4fe","background":"#f8f9ff","on-secondary-fixed-variant":"#003ea8","on-secondary-container":"#fefcff","inverse-surface":"#213145","error":"#ba1a1a","secondary":"#0051d5","tertiary-fixed":"#dae2fd","secondary-fixed":"#dbe1ff","on-tertiary-fixed-variant":"#3f465c","tertiary-fixed-dim":"#bec6e0","inverse-on-surface":"#eaf1ff","surface-container-low":"#eff4ff","on-tertiary-fixed":"#131b2e","surface-tint":"#4059aa","on-primary-container":"#90a8ff","on-tertiary-container":"#a4acc5","on-surface":"#0b1c30","surface-container-highest":"#d3e4fe","surface-container":"#e5eeff","surface-bright":"#f8f9ff","secondary-container":"#316bf3","on-error-container":"#93000a","primary":"#00236f","on-surface-variant":"#444651","secondary-fixed-dim":"#b4c5ff","primary-container":"#1e3a8a","on-primary-fixed-variant":"#264191","on-background":"#0b1c30","surface-dim":"#cbdbf5","inverse-primary":"#b6c4ff","tertiary-container":"#384055","primary-fixed-dim":"#b6c4ff","surface":"#f8f9ff","on-error":"#ffffff","on-tertiary":"#ffffff"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"space-sm":"0.5rem","space-md":"0.75rem","margin-md":"1.5rem","margin":"1rem","space-xl":"1.5rem","space-xs":"0.25rem","margin-lg":"2rem","gutter-lg":"1.5rem","gutter":"1rem","space-lg":"1rem"},"fontFamily":{"body-lg":["Inter"],"label-lg":["Inter"],"headline-xl":["Inter"],"headline-lg-mobile":["Inter"],"headline-md":["Inter"],"title-md":["Inter"],"title-sm":["Inter"],"numeric-table":["Inter"],"headline-sm":["Inter"],"headline-lg":["Inter"],"headline-xl-mobile":["Inter"],"label-sm":["Inter"],"body-md":["Inter"],"label-md":["Inter"],"body-sm":["Inter"]},"fontSize":{"body-lg":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-lg":["13px",{"lineHeight":"16px","letterSpacing":"0.01em","fontWeight":"600"}],"headline-xl":["36px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-md":["22px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"title-md":["16px",{"lineHeight":"22px","fontWeight":"600"}],"title-sm":["14px",{"lineHeight":"20px","fontWeight":"600"}],"numeric-table":["13px",{"lineHeight":"18px","fontWeight":"500"}],"headline-sm":["18px",{"lineHeight":"24px","fontWeight":"600"}],"headline-lg":["30px",{"lineHeight":"38px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-xl-mobile":["28px",{"lineHeight":"36px","letterSpacing":"-0.01em","fontWeight":"700"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.04em","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"20px","fontWeight":"400"}],"body-sm":["13px",{"lineHeight":"18px","fontWeight":"400"}]}}}}</script></head>
+<body class="bg-surface font-body-md text-on-surface antialiased selection:bg-secondary-fixed selection:text-on-secondary-fixed">
+
+<header class="fixed top-0 left-0 right-0 w-full z-50 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+  <div class="bg-tertiary text-on-tertiary h-10 px-margin-lg flex items-center justify-between text-label-md font-label-md">
+    <div class="flex items-center gap-space-sm">
+      <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+      <span class="uppercase tracking-wider">Republic Procurement Oversight • GFR 2017 &amp; CVC Compliant • AI Recommends. Humans Decide.</span>
+    </div>
+    <div class="hidden md:flex items-center gap-space-md">
+      <span class="bg-tertiary-container px-space-sm py-space-xs rounded text-label-sm font-label-sm uppercase tracking-wider text-on-surface-variant text-tertiary-fixed">National Portal Integration Tier-IV</span>
+    </div>
+  </div>
+  <div class="h-20 bg-surface-container-lowest/95 backdrop-blur-md px-margin-lg flex items-center justify-between">
+    <div class="flex items-center gap-space-lg">
+      <div class="flex flex-col">
+        <div class="flex items-center gap-space-sm">
+          <span class="font-headline-sm text-headline-sm font-bold tracking-tight text-primary">THEMIS</span>
+          <span class="bg-surface-container text-primary font-label-sm text-label-sm px-space-sm py-0.5 rounded uppercase">v4.2 PRO</span>
+        </div>
+        <span class="font-label-sm text-label-sm text-on-surface-variant">GovTech Evaluation Enclave</span>
+      </div>
+    </div>
+    <nav class="hidden xl:flex items-center gap-space-xl" data-active-classes="text-primary font-title-sm">
+      <a aria-current="page" class="transition-colors text-primary font-title-sm" href="#">Overview</a>
+      <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors" href="#">Capabilities</a>
+      <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors" href="#">Statutory Architecture</a>
+      <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors" href="#">Governance &amp; Ethics</a>
+      <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors" href="#">Case Studies</a>
+      <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors" href="#">Security &amp; GFR 2017</a>
+    </nav>
+    <div class="flex items-center gap-space-md">
+      <a class="hidden md:inline-flex font-label-md text-label-md text-on-surface-variant hover:text-primary px-space-md py-space-sm transition-colors" href="#">Live Tender Portal</a>
+      <a class="inline-flex items-center justify-center bg-primary text-on-primary font-label-lg text-label-lg px-space-lg py-space-sm rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-all shadow-[0_1px_2px_rgba(0,0,0,0.08)]" href="index.html">Launch App</a>
+      <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+        <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="w-full pt-[120px] bg-surface min-h-screen">
+  <div class="flex flex-col w-full">
+
+    <!-- Institutional Top Trust Banner -->
+    <section class="w-full bg-tertiary text-on-tertiary py-space-sm px-margin-lg">
+      <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-space-sm text-center md:text-left">
+        <div class="flex items-center gap-space-sm">
+          <span class="w-2.5 h-2.5 rounded-full bg-secondary animate-ping"></span>
+          <span class="font-label-md text-label-md tracking-wider uppercase text-surface-variant font-semibold">NATIONAL PROCUREMENT INTEGRITY INITIATIVE • GFR 2017 RULE 173 COMPLIANT</span>
+        </div>
+        <div class="flex items-center gap-space-lg text-label-sm font-label-sm text-outline-variant">
+          <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-surface-tint">verified_user</span> MeitY Sovereign Cloud Verified</span>
+          <span class="hidden sm:inline-flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-surface-tint">lock</span> 256-Bit Air-Gapped Zero Data Leakage</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hero Section -->
+    <section class="w-full bg-surface-container-low px-margin-lg pt-12 pb-20">
+      <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg items-center">
+        <div class="lg:col-span-6 flex flex-col space-y-space-lg">
+          <div class="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-surface-container-high text-primary w-fit">
+            <span class="material-symbols-outlined text-[16px] text-secondary">gavel</span>
+            <span class="font-label-sm text-label-sm uppercase tracking-wider font-semibold">Institutional GovTech Enclave • v4.2 PRO</span>
+          </div>
+          <h1 class="font-headline-xl text-headline-xl text-primary font-bold tracking-tight">Autonomous Scrutiny. Uncompromising Integrity. Flawless Tender Awards.</h1>
+          <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">THEMIS empowers public procurement officers and evaluation committees to parse 1,000+ page bids in seconds, execute double-blind technical evaluations, detect cross-bidder collusion, and produce court-proof audit trails.</p>
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-space-md pt-space-xs">
+            <a class="inline-flex items-center justify-center gap-space-sm bg-primary text-on-primary font-label-lg text-label-lg px-space-xl py-3.5 rounded-lg hover:bg-primary-container shadow-md transition-all group" href="#">
+              <span>Request Enclave Access &amp; Pilot</span>
+              <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </a>
+            <button class="inline-flex items-center justify-center gap-space-sm bg-surface-container-lowest text-primary font-label-lg text-label-lg px-space-lg py-3.5 rounded-lg hover:bg-surface-container-high transition-colors shadow-sm" type="button">
+              <span class="material-symbols-outlined text-[20px] text-secondary">play_circle</span>
+              <span>Chamber Walkthrough</span>
+            </button>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-space-md pt-space-md">
+            <div class="bg-surface-container-lowest p-space-sm rounded-lg shadow-sm"><div class="font-title-md text-title-md font-bold text-primary">₹42,000+ Cr</div><div class="font-label-sm text-label-sm text-on-surface-variant">Tenders Audited</div></div>
+            <div class="bg-surface-container-lowest p-space-sm rounded-lg shadow-sm"><div class="font-title-md text-title-md font-bold text-secondary">18s</div><div class="font-label-sm text-label-sm text-on-surface-variant">Groq Latency / Bid</div></div>
+            <div class="bg-surface-container-lowest p-space-sm rounded-lg shadow-sm"><div class="font-title-md text-title-md font-bold text-primary">Zero Bias</div><div class="font-label-sm text-label-sm text-on-surface-variant">Blind Protocol</div></div>
+            <div class="bg-surface-container-lowest p-space-sm rounded-lg shadow-sm"><div class="font-title-md text-title-md font-bold text-primary">100%</div><div class="font-label-sm text-label-sm text-on-surface-variant">GFR 2017 &amp; CVC</div></div>
+          </div>
+        </div>
+        <div class="lg:col-span-6 relative">
+          <div class="relative rounded-xl overflow-hidden shadow-2xl bg-surface-container">
+            <!-- REPLACE: images/hero-committee.jpg -->
+            <img class="w-full h-[440px] object-cover" alt="High-level public procurement evaluation committee room" src="images/hero-committee.png">
+            <div class="absolute top-4 left-4 bg-tertiary/90 backdrop-blur-md text-on-tertiary px-space-md py-space-xs rounded-full flex items-center gap-space-sm shadow-md">
+              <span class="w-2 h-2 rounded-full bg-secondary-fixed"></span>
+              <span class="font-label-sm text-label-sm uppercase tracking-wider">SHA-256: 9f8a3c89…e82d • Audited</span>
+            </div>
+            <div class="absolute bottom-4 left-4 right-4 bg-surface-container-lowest/95 backdrop-blur-md p-space-md rounded-lg shadow-lg">
+              <div class="flex items-center justify-between mb-space-xs">
+                <span class="inline-flex items-center gap-1 font-label-sm text-label-sm font-bold text-primary"><span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span> ACTIVE EVALUATION CHAMBER</span>
+                <span class="bg-surface-variant text-primary font-label-sm text-label-sm px-2 py-0.5 rounded font-semibold">PHED-WSS-2026-081</span>
+              </div>
+              <div class="font-title-sm text-title-sm text-on-surface font-semibold mb-space-xs">PHED Water Quality IoT Monitoring Grid (₹4.50 Cr)</div>
+              <div class="flex flex-wrap items-center gap-space-sm font-body-sm text-body-sm text-on-surface-variant">
+                <span class="bg-surface-container px-2 py-0.5 rounded text-on-surface">4 Bidders Evaluated</span>
+                <span class="bg-surface-container px-2 py-0.5 rounded text-on-surface">3 Qualified (E1-E7)</span>
+                <span class="bg-error-container text-on-error-container px-2 py-0.5 rounded font-medium flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">warning</span> 1 Cartel Pattern Flagged</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Problem & Public Sector Trust Imperative -->
+    <section class="w-full bg-surface-container-lowest px-margin-lg py-20">
+      <div class="max-w-7xl mx-auto flex flex-col space-y-12">
+        <div class="flex flex-col space-y-space-xs max-w-3xl">
+          <span class="font-label-md text-label-md text-secondary uppercase tracking-wider font-semibold">Institutional Vulnerabilities</span>
+          <h2 class="font-headline-lg text-headline-lg text-primary font-bold tracking-tight">The Three Fragilities in High-Value Public Capital Allocation</h2>
+          <p class="font-body-md text-body-md text-on-surface-variant">Public tender scrutiny without deterministic machine oversight leaves state procurement committees exposed to legal injunctions and procedural vulnerabilities.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter-lg">
+          <div class="bg-surface-container-low p-space-lg rounded-xl shadow-sm flex flex-col justify-between space-y-space-md">
+            <div class="space-y-space-sm">
+              <div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[28px]">find_in_page</span></div>
+              <div class="font-label-sm text-label-sm text-outline uppercase tracking-wider font-semibold">Vulnerability 01</div>
+              <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">The 5,000-Page Scrutiny Deficit</h3>
+              <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">Voluminous Technical Proposals across 12+ annexures lead to unspotted debarment histories, missed blacklisting disclosures, arithmetic BOQ anomalies, and omitted bank guarantee validity periods.</p>
+            </div>
+            <div class="bg-surface-container-lowest p-space-sm rounded font-label-sm text-label-sm text-error font-medium flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">priority_high</span> Manual audit failure risk: 38.4%</div>
+          </div>
+          <div class="bg-surface-container-low p-space-lg rounded-xl shadow-sm flex flex-col justify-between space-y-space-md">
+            <div class="space-y-space-sm">
+              <div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[28px]">hub</span></div>
+              <div class="font-label-sm text-label-sm text-outline uppercase tracking-wider font-semibold">Vulnerability 02</div>
+              <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Bidder Cartels &amp; Sub-Contract Collusion</h3>
+              <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">Syndicated vendors engineer cosmetic bidding competition by submitting mirrored line items, shared digital certificate signers, synchronized submission timestamps, and identical source document metadata.</p>
+            </div>
+            <div class="bg-surface-container-lowest p-space-sm rounded font-label-sm text-label-sm text-error font-medium flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">device_hub</span> Hidden syndicate loss: ₹12,400+ Cr</div>
+          </div>
+          <div class="bg-surface-container-low p-space-lg rounded-xl shadow-sm flex flex-col justify-between space-y-space-md">
+            <div class="space-y-space-sm">
+              <div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[28px]">balance</span></div>
+              <div class="font-label-sm text-label-sm text-outline uppercase tracking-wider font-semibold">Vulnerability 03</div>
+              <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Court Litigations &amp; Tender Stay Orders</h3>
+              <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">Subjective or discretionary committee scoring without rigorous clause citations provokes aggrieved vendors to file Writ Petitions in High Courts, staying critical infrastructure projects for years.</p>
+            </div>
+            <div class="bg-surface-container-lowest p-space-sm rounded font-label-sm text-label-sm text-error font-medium flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">timer_off</span> Avg. injunction delay: 14.8 Months</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- The THEMIS 7-Agent Evaluation Enclave -->
+    <section class="w-full bg-surface px-margin-lg py-20">
+      <div class="max-w-7xl mx-auto flex flex-col space-y-12">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
+          <div class="max-w-3xl space-y-space-xs">
+            <span class="font-label-md text-label-md text-secondary uppercase tracking-wider font-semibold">Autonomous Core Architecture</span>
+            <h2 class="font-headline-lg text-headline-lg text-primary font-bold tracking-tight">The 7-Agent Sovereign Evaluation Enclave</h2>
+            <p class="font-body-md text-body-md text-on-surface-variant">Deterministic, multi-specialist micro-agents executing parallel statutory verification under strict human committee oversight.</p>
+          </div>
+          <div class="bg-surface-container px-space-md py-space-sm rounded-lg font-label-sm text-label-sm text-primary flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">verified</span>
+            <span>Zero Hallucination Guaranteed via Dual-Pass Parsing</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter-lg">
+          <div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col space-y-space-sm"><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm font-bold bg-primary text-on-primary px-2 py-0.5 rounded">AGENT 01</span><span class="material-symbols-outlined text-secondary text-[24px]">quick_reference</span></div><h3 class="font-title-md text-title-md font-bold text-on-surface">Tender Parser</h3><p class="font-body-sm text-body-sm text-on-surface-variant">Extracts pre-qualification eligibility rules (E1-E7), technical evaluation matrices (T1-T5), and BOQ formulas from NIT PDFs in under 0.8s with exact clause indices.</p></div>
+          <div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col space-y-space-sm"><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm font-bold bg-primary text-on-primary px-2 py-0.5 rounded">AGENT 02</span><span class="material-symbols-outlined text-secondary text-[24px]">domain_verification</span></div><h3 class="font-title-md text-title-md font-bold text-on-surface">Compliance Verifier</h3><p class="font-body-sm text-body-sm text-on-surface-variant">Executes automated cross-verifications against MCA21, GSTIN portals, UDIN registers, ISO certification databases, and central debarment lists without manual searches.</p></div>
+          <div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col space-y-space-sm"><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm font-bold bg-primary text-on-primary px-2 py-0.5 rounded">AGENT 03</span><span class="material-symbols-outlined text-secondary text-[24px]">visibility_off</span></div><h3 class="font-title-md text-title-md font-bold text-on-surface">Blind Technical Evaluator</h3><p class="font-body-sm text-body-sm text-on-surface-variant">Masks corporate identities, vendor logos, and letterheads to score technical methodology, resource plans, and past experience purely against objective NIT criteria.</p></div>
+          <div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col space-y-space-sm"><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm font-bold bg-primary text-on-primary px-2 py-0.5 rounded">AGENT 04</span><span class="material-symbols-outlined text-secondary text-[24px]">calculate</span></div><h3 class="font-title-md text-title-md font-bold text-on-surface">Financial &amp; BOQ Auditor</h3><p class="font-body-sm text-body-sm text-on-surface-variant">Performs item-by-item arithmetic recalculation, verifies tax code structures, detects unviable abnormally low bids (ALBs), and maps QCBS 70:30 formula matrices.</p></div>
+          <div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col space-y-space-sm"><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm font-bold bg-primary text-on-primary px-2 py-0.5 rounded">AGENT 05</span><span class="material-symbols-outlined text-secondary text-[24px]">radar</span></div><h3 class="font-title-md text-title-md font-bold text-on-surface">Risk &amp; Collusion Detector</h3><p class="font-body-sm text-body-sm text-on-surface-variant">Deploys n-gram similarity checks, PDF metadata forensics, shared author attributes, and submission timestamp matching to detect organized bidder cartels.</p></div>
+          <div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col space-y-space-sm"><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm font-bold bg-primary text-on-primary px-2 py-0.5 rounded">AGENT 06</span><span class="material-symbols-outlined text-secondary text-[24px]">assistant_direction</span></div><h3 class="font-title-md text-title-md font-bold text-on-surface">Committee Chair Assistant</h3><p class="font-body-sm text-body-sm text-on-surface-variant">Synthesizes technical findings, outlines discretionary deliberation points, and drafts statutory pre-qualification clarification notices under strict CVC rules.</p></div>
+          <div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col space-y-space-sm md:col-span-2 lg:col-span-2"><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm font-bold bg-primary text-on-primary px-2 py-0.5 rounded">AGENT 07</span><span class="material-symbols-outlined text-secondary text-[24px]">verified</span></div><h3 class="font-title-md text-title-md font-bold text-on-surface">Statutory Audit &amp; Report Compiler</h3><p class="font-body-sm text-body-sm text-on-surface-variant">Compiles immutable, High Court-defensible comparative statements with exact clause-by-clause rationale, digital signature tokens (NIC DSC), and an SHA-256 cryptographic chain ready for CAG and CVC scrutiny.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Deep Feature Showcase -->
+    <section class="w-full bg-surface-container-low px-margin-lg py-20">
+      <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg items-center">
+        <div class="lg:col-span-5 relative">
+          <div class="relative rounded-xl overflow-hidden shadow-xl bg-surface-container">
+            <!-- REPLACE: images/feature-officer.jpg -->
+            <img class="w-full h-[520px] object-cover" alt="Distinguished senior female civil servant reviewing digital verification certificates" src="images/feature-officer.png">
+            <div class="absolute bottom-4 left-4 right-4 bg-tertiary/95 backdrop-blur-md p-space-md rounded-lg text-on-tertiary shadow-lg">
+              <div class="flex items-center gap-space-sm mb-1"><span class="material-symbols-outlined text-secondary text-[20px]">verified_user</span><span class="font-label-md text-label-md font-bold">Human-in-the-Loop Statutory Lock</span></div>
+              <p class="font-body-sm text-body-sm text-surface-variant">"AI recommends. Humans decide. Under GFR 2017 Rule 173, sovereign award authority remains exclusively with the IAS/IES chaired Evaluation Committee."</p>
+            </div>
+          </div>
+        </div>
+        <div class="lg:col-span-7 flex flex-col space-y-space-lg">
+          <div class="space-y-space-xs">
+            <span class="font-label-md text-label-md text-secondary uppercase tracking-wider font-semibold">Statutory Governance Model</span>
+            <h2 class="font-headline-lg text-headline-lg text-primary font-bold tracking-tight">AI Recommends. Humans Decide. Absolute Discretionary Sovereignty.</h2>
+            <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">THEMIS is purposefully engineered to eliminate automated black-box decisions. It functions as an unflagging statutory researcher and evidentiary assistant, providing committee members with irrefutable citations while leaving every score, qualification, and award decision in human hands.</p>
+          </div>
+          <div class="space-y-space-md">
+            <div class="flex items-start gap-space-md bg-surface-container-lowest p-space-md rounded-lg shadow-sm"><div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary flex-shrink-0"><span class="material-symbols-outlined text-[22px]">fingerprint</span></div><div><h4 class="font-title-sm text-title-sm font-bold text-on-surface">Quorum DSC Token Authorization</h4><p class="font-body-sm text-body-sm text-on-surface-variant mt-1">No tender evaluation stage can be locked or finalized without multi-officer DSC (Digital Signature Certificate) sign-offs via Class-3 government USB crypto-tokens.</p></div></div>
+            <div class="flex items-start gap-space-md bg-surface-container-lowest p-space-md rounded-lg shadow-sm"><div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary flex-shrink-0"><span class="material-symbols-outlined text-[22px]">policy</span></div><div><h4 class="font-title-sm text-title-sm font-bold text-on-surface">Evidentiary Citation Protocol</h4><p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Every score deduction or compliance discrepancy is tied directly to an unalterable excerpt from the bidder's submitted PDF, complete with page number, clause index, and original scan snippet.</p></div></div>
+            <div class="flex items-start gap-space-md bg-surface-container-lowest p-space-md rounded-lg shadow-sm"><div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary flex-shrink-0"><span class="material-symbols-outlined text-[22px]">lock_reset</span></div><div><h4 class="font-title-sm text-title-sm font-bold text-on-surface">Double-Blind Evaluation Ledger</h4><p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Technical sub-committees evaluate blinded submissions under randomized cryptographic aliases (e.g., BIDDER-ALPHA, BIDDER-BETA) until committee consensus is officially signed.</p></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Comparative Matrix Snapshot -->
+    <section class="w-full bg-surface-container-lowest px-margin-lg py-20">
+      <div class="max-w-7xl mx-auto flex flex-col space-y-12">
+        <div class="flex flex-col space-y-space-xs max-w-3xl">
+          <span class="font-label-md text-label-md text-secondary uppercase tracking-wider font-semibold">Live Operational Interface</span>
+          <h2 class="font-headline-lg text-headline-lg text-primary font-bold tracking-tight">High-Density Multi-Bidder Audit Ledger</h2>
+          <p class="font-body-md text-body-md text-on-surface-variant">Real-time synchronized evaluation grid demonstrating clause verification, QCBS scoring, and forensic flag surfacing.</p>
+        </div>
+        <div class="w-full overflow-x-auto bg-surface rounded-xl shadow-md">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+                <th class="py-3 px-space-md">Bidder Identifier</th>
+                <th class="py-3 px-space-md">Pre-Qual (E1-E7)</th>
+                <th class="py-3 px-space-md">Technical Score (T1-T5)</th>
+                <th class="py-3 px-space-md">Financial Bid</th>
+                <th class="py-3 px-space-md">QCBS Composite Rank</th>
+                <th class="py-3 px-space-md">CVC Integrity Scan</th>
+                <th class="py-3 px-space-md text-right">Committee Action</th>
+              </tr>
+            </thead>
+            <tbody class="font-body-sm text-body-sm divide-y-0">
+              <tr class="bg-surface-container-lowest hover:bg-surface-container-low transition-colors">
+                <td class="py-4 px-space-md font-semibold text-primary"><div class="flex flex-col"><span class="font-title-sm text-title-sm">Bidder Alpha (Masked)</span><span class="font-label-sm text-label-sm text-outline">Ref: B-2026-091A</span></div></td>
+                <td class="py-4 px-space-md"><span class="bg-surface-container text-secondary font-label-sm text-label-sm px-2.5 py-1 rounded font-semibold inline-flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">check_circle</span> 7/7 PASSED</span></td>
+                <td class="py-4 px-space-md"><div class="flex items-center gap-2"><span class="font-title-sm text-title-sm font-bold text-on-surface">88.5</span><span class="font-label-sm text-label-sm text-outline">/100</span></div></td>
+                <td class="py-4 px-space-md font-medium text-on-surface">₹4,28,50,000</td>
+                <td class="py-4 px-space-md"><span class="bg-primary text-on-primary font-label-sm text-label-sm px-2.5 py-1 rounded font-bold">L1 / H1 QUALIFIED</span></td>
+                <td class="py-4 px-space-md"><span class="font-label-sm text-label-sm text-secondary font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">format_image_left</span> Clean Ledger</span></td>
+                <td class="py-4 px-space-md text-right"><button class="bg-surface-container text-primary font-label-sm text-label-sm px-space-md py-1.5 rounded hover:bg-primary hover:text-on-primary transition-all" type="button">Inspect Dossier</button></td>
+              </tr>
+              <tr class="bg-surface-container-low hover:bg-surface-container-high transition-colors">
+                <td class="py-4 px-space-md font-semibold text-primary"><div class="flex flex-col"><span class="font-title-sm text-title-sm">Bidder Bravo (Masked)</span><span class="font-label-sm text-label-sm text-outline">Ref: B-2026-091B</span></div></td>
+                <td class="py-4 px-space-md"><span class="bg-surface-container text-secondary font-label-sm text-label-sm px-2.5 py-1 rounded font-semibold inline-flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">check_circle</span> 7/7 PASSED</span></td>
+                <td class="py-4 px-space-md"><div class="flex items-center gap-2"><span class="font-title-sm text-title-sm font-bold text-on-surface">76.0</span><span class="font-label-sm text-label-sm text-outline">/100</span></div></td>
+                <td class="py-4 px-space-md font-medium text-on-surface">₹4,42,00,000</td>
+                <td class="py-4 px-space-md"><span class="bg-surface-container text-on-surface font-label-sm text-label-sm px-2.5 py-1 rounded font-bold">RANK 2 (L2)</span></td>
+                <td class="py-4 px-space-md"><span class="font-label-sm text-label-sm text-secondary font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">format_image_left</span> Clean Ledger</span></td>
+                <td class="py-4 px-space-md text-right"><button class="bg-surface-container text-primary font-label-sm text-label-sm px-space-md py-1.5 rounded hover:bg-primary hover:text-on-primary transition-all" type="button">Inspect Dossier</button></td>
+              </tr>
+              <tr class="bg-surface-container-lowest hover:bg-surface-container-low transition-colors">
+                <td class="py-4 px-space-md font-semibold text-primary"><div class="flex flex-col"><span class="font-title-sm text-title-sm">Bidder Charlie (Masked)</span><span class="font-label-sm text-label-sm text-outline">Ref: B-2026-091C</span></div></td>
+                <td class="py-4 px-space-md"><span class="bg-error-container text-on-error-container font-label-sm text-label-sm px-2.5 py-1 rounded font-bold inline-flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">cancel</span> E-4 DEFICIT</span></td>
+                <td class="py-4 px-space-md"><div class="flex items-center gap-2 text-outline"><span class="font-title-sm text-title-sm font-bold">--</span><span class="font-label-sm text-label-sm">(Disqualified)</span></div></td>
+                <td class="py-4 px-space-md font-medium text-outline">--</td>
+                <td class="py-4 px-space-md"><span class="bg-error-container text-on-error-container font-label-sm text-label-sm px-2.5 py-1 rounded font-bold">DISQUALIFIED</span></td>
+                <td class="py-4 px-space-md"><span class="font-label-sm text-label-sm text-error font-bold flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">warning</span> Metadata Match Bidder-D</span></td>
+                <td class="py-4 px-space-md text-right"><button class="bg-error-container text-on-error-container font-label-sm text-label-sm px-space-md py-1.5 rounded hover:opacity-90 transition-all font-semibold" type="button">View Infraction</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="bg-surface-container-high p-space-md flex flex-col md:flex-row items-start md:items-center justify-between gap-space-sm">
+            <div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-primary text-[20px]">format_quote</span><span class="font-body-sm text-body-sm text-on-surface"><strong>Evidentiary Proof Anchor:</strong> Bidder Charlie disqualified under Rule 173(x) for uncurable turnover shortfall of ₹1.42 Cr. Citation: <em>Vol-II, Schedule-B, Audited Balance Sheet 2024, Page 47.</em></span></div>
+            <span class="font-label-sm text-label-sm bg-surface-container-lowest px-space-md py-1 rounded font-mono text-primary font-bold whitespace-nowrap">SHA-256: d83a9…c032</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Security, Sovereign Cloud & Statutory Compliance Grid -->
+    <section class="w-full bg-surface px-margin-lg py-20">
+      <div class="max-w-7xl mx-auto flex flex-col space-y-12">
+        <div class="flex flex-col space-y-space-xs max-w-3xl">
+          <span class="font-label-md text-label-md text-secondary uppercase tracking-wider font-semibold">Defense-Grade Architecture</span>
+          <h2 class="font-headline-lg text-headline-lg text-primary font-bold tracking-tight">Sovereign Cloud &amp; Statutory Compliance</h2>
+          <p class="font-body-md text-body-md text-on-surface-variant">Built to satisfy the highest echelons of national cybersecurity and judicial audit requirements.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter-lg">
+          <div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col space-y-space-sm"><div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[24px]">verified_user</span></div><h3 class="font-title-sm text-title-sm font-bold text-on-surface">STQC &amp; CERT-In Empanelled</h3><p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">Full compliance with Government of India information security norms. Rigorous penetration tested against OWASP Top 10 API vulnerabilities.</p></div>
+          <div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col space-y-space-sm"><div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[24px]">gavel</span></div><h3 class="font-title-sm text-title-sm font-bold text-on-surface">CVC &amp; GFR 2017 Rule 173(xix)</h3><p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">Strict alignment with Central Vigilance Commission procurement manuals, preserving transparency, fairness, and equal opportunity at every bid phase.</p></div>
+          <div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col space-y-space-sm"><div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[24px]">cloud_off</span></div><h3 class="font-title-sm text-title-sm font-bold text-on-surface">Air-Gapped Sovereign LLM</h3><p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">Zero Data Retention guarantee. Model inference executes on localized Indian sovereign enclave instances with no foreign cloud dependencies.</p></div>
+          <div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col space-y-space-sm"><div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[24px]">link</span></div><h3 class="font-title-sm text-title-sm font-bold text-on-surface">Tamper-Evident Hash Chains</h3><p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">Every committee comment, score override, and tender notice is cryptographically chained, producing an unassailable record admissible in High Court disputes.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Institutional Testimonial -->
+    <section class="w-full bg-surface-container-low px-margin-lg py-20">
+      <div class="max-w-5xl mx-auto bg-surface-container-lowest p-space-xl md:p-12 rounded-2xl shadow-md relative overflow-hidden">
+        <div class="flex flex-col space-y-space-lg relative z-10">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-secondary text-[32px]">shield</span><span class="font-label-sm text-label-sm uppercase tracking-wider font-bold text-primary">Public Infrastructure Authority Case Audit</span></div>
+            <span class="font-label-sm text-label-sm bg-surface-container px-3 py-1 rounded text-on-surface font-semibold">Tender Val: ₹15.80 Cr</span>
+          </div>
+          <blockquote class="font-headline-sm text-headline-sm text-primary font-semibold leading-relaxed">"THEMIS reduced our technical evaluation cycle from 45 days down to under 4 hours, while catching an uncurable turnover deficit in a ₹15 Cr tender that would have inevitably resulted in High Court litigation. It is the single most vital transparency asset ever deployed in our ministry."</blockquote>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-md pt-space-sm">
+            <div>
+              <div class="font-title-md text-title-md font-bold text-on-surface">Rajesh Sharma, IAS</div>
+              <div class="font-body-sm text-body-sm text-on-surface-variant">Principal Secretary &amp; Chairman, Tender Evaluation Board</div>
+              <div class="font-label-sm text-label-sm text-secondary font-medium mt-0.5">State Water Supply &amp; Sanitation Department</div>
+            </div>
+            <div class="flex items-center gap-space-md">
+              <div class="bg-surface-container-low px-space-md py-space-sm rounded-lg text-center"><div class="font-title-md text-title-md font-bold text-primary">45 Days ➔ 4 Hrs</div><div class="font-label-sm text-label-sm text-outline">Evaluation Latency</div></div>
+              <div class="bg-surface-container-low px-space-md py-space-sm rounded-lg text-center"><div class="font-title-md text-title-md font-bold text-secondary">0 Appeals</div><div class="font-label-sm text-label-sm text-outline">Litigation Filed</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- High-Impact Closing CTA Banner -->
+    <section class="w-full bg-primary text-on-primary px-margin-lg py-20 relative overflow-hidden">
+      <div class="max-w-7xl mx-auto flex flex-col items-center text-center space-y-space-lg relative z-10">
+        <div class="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-primary-container text-on-primary-container"><span class="w-2 h-2 rounded-full bg-secondary-fixed animate-ping"></span><span class="font-label-sm text-label-sm uppercase tracking-wider font-semibold">Government Procurement Modernization</span></div>
+        <h2 class="font-headline-xl text-headline-xl font-bold tracking-tight max-w-4xl">Modernise Your Department's Tender Evaluation with Absolute Statutory Certainty.</h2>
+        <p class="font-body-lg text-body-lg text-surface-variant max-w-2xl leading-relaxed">Empower your procurement committee with instantaneous parsing, cartel detection, and court-proof evaluation records adhering strictly to GFR 2017.</p>
+        <div class="flex flex-col sm:flex-row items-center gap-space-md pt-space-xs">
+          <a class="inline-flex items-center justify-center gap-space-sm bg-secondary text-on-secondary font-label-lg text-label-lg px-space-xl py-4 rounded-lg hover:bg-secondary-container transition-all shadow-lg font-bold" href="#"><span>Schedule a Formal Committee Demonstration</span><span class="material-symbols-outlined text-[18px]">calendar_month</span></a>
+          <button class="inline-flex items-center justify-center gap-space-sm bg-tertiary-container text-on-tertiary font-label-lg text-label-lg px-space-lg py-4 rounded-lg hover:bg-tertiary transition-colors shadow-sm" type="button"><span class="material-symbols-outlined text-[18px]">download</span><span>Download GFR 2017 Compliance Whitepaper</span></button>
+        </div>
+        <div class="flex flex-wrap items-center justify-center gap-space-lg pt-space-md text-label-sm font-label-sm text-surface-variant">
+          <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-secondary-fixed">check_circle</span> NIC e-Procurement API Compatible</span>
+          <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-secondary-fixed">check_circle</span> GeM Enterprise Bridge Ready</span>
+          <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-secondary-fixed">check_circle</span> Standard Operating Procedure (SOP) Included</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="w-full bg-surface-container-low text-on-surface">
+  <div class="max-w-7xl mx-auto px-margin-lg pt-16 pb-12">
+    <div class="bg-surface-container-high/60 p-space-lg rounded-xl mb-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-primary text-[24px]">gavel</span><p class="font-body-sm text-body-sm text-on-surface">Designed strictly in accordance with General Financial Rules (GFR 2017 Rule 173), CVC Guidelines, and MeitY Sovereign Cloud Norms. Final tender award authority remains sovereign with the Evaluation Committee.</p></div><span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary whitespace-nowrap bg-surface-container-lowest px-space-md py-space-xs rounded">Statutory Audit Active</span></div>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter-lg pb-12">
+      <div class="space-y-space-sm">
+        <div class="flex items-center gap-space-sm">
+          <span class="font-title-md text-title-md text-primary font-bold">THEMIS</span>
+        </div>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">Sovereign artificial intelligence infrastructure powering multi-crore public tender evaluations with verifiable auditability.</p>
+      </div>
+      <div><h4 class="font-label-lg text-label-lg text-primary uppercase tracking-wider mb-space-md">Frameworks &amp; Compliance</h4><ul class="space-y-space-sm"><li class="font-body-sm text-body-sm text-on-surface-variant">GFR 2017 Compliance Matrix</li><li class="font-body-sm text-body-sm text-on-surface-variant">CVC Statutory Directives</li><li class="font-body-sm text-body-sm text-on-surface-variant">GeM Procurement Alignment</li><li class="font-body-sm text-body-sm text-on-surface-variant">Audit Trail Retention Protocol</li></ul></div>
+      <div><h4 class="font-label-lg text-label-lg text-primary uppercase tracking-wider mb-space-md">Government Interop</h4><ul class="space-y-space-sm"><li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">NIC Integration</a></li><li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">e-Procurement API</a></li><li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Sovereign Enclave</a></li><li><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Right to Information (RTI)</a></li></ul></div>
+      <div><h4 class="font-label-lg text-label-lg text-primary uppercase tracking-wider mb-space-md">Certifications &amp; Trust</h4><ul class="space-y-space-sm"><li class="font-body-sm text-body-sm text-on-surface-variant">STQC Audited Model Artifacts</li><li class="font-body-sm text-body-sm text-on-surface-variant">CERT-In Empaneled Cybersecurity</li><li class="font-body-sm text-body-sm text-on-surface-variant">MeitY Empaneled Data Sovereign</li><li class="font-body-sm text-body-sm text-on-surface-variant">Zero Data Retention Guarantee</li></ul></div>
+    </div>
+    <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-space-md font-body-sm text-body-sm text-on-surface-variant"><p>© 2026 THEMIS GovTech Systems. Empowering transparent, incorruptible public procurement.</p><div class="flex items-center gap-space-lg"><span class="font-label-sm text-label-sm text-on-surface-variant">Republic of India GovTech Enclave</span><span class="font-label-sm text-label-sm text-on-surface-variant">Security Classification: SECRET-AIRGAP</span></div></div>
+  </div>
+</footer>
+
+</body></html>
+
