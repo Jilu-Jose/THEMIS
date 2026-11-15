@@ -62,8 +62,23 @@ async def unhandled(_, exc):
 # ------------------------------------------------------------------ meta
 @app.get("/api/health")
 def health():
-    return {"ok": True, "mode": config.llm_mode(), "model": config.DEFAULT_MODEL, "models": config.MODELS,
-            "has_key": bool(config.GROQ_API_KEY), "defaults": config.DEFAULT_SETTINGS}
+    import semantic_kernel as _sk
+    return {
+        "ok": True,
+        "mode": config.llm_mode(),
+        "model": config.DEFAULT_MODEL,
+        "models": config.MODELS,
+        "has_key": bool(config.GROQ_API_KEY),
+        "defaults": config.DEFAULT_SETTINGS,
+        "framework": "semantic-kernel",
+        "semantic_kernel_version": getattr(_sk, "__version__", "1.47.0"),
+        "plugins": [
+            "RetrievalPlugin",
+            "FinancialArithmeticPlugin",
+            "TenderParserPlugin",
+            "ClarificationAgentPlugin",
+        ],
+    }
 
 
 # ------------------------------------------------------------------ sessions
@@ -226,6 +241,25 @@ class NoteBody(BaseModel):
     officer: str | None = None
 
 
+class ClarificationDraftBody(BaseModel):
+    bidder: str
+    criterion_id: str
+    officer: str | None = None
+    llm_mode: str | None = None
+    model: str | None = None
+    effort: str | None = None
+
+
+class ClarificationReplyBody(BaseModel):
+    bidder: str
+    criterion_id: str
+    vendor_reply: str
+    officer: str | None = None
+    llm_mode: str | None = None
+    model: str | None = None
+    effort: str | None = None
+
+
 class OfficerBody(BaseModel):
     officer: str | None = None
 
@@ -244,6 +278,21 @@ def rulings(sid: str, b: RulingBody):
 @app.post("/api/sessions/{sid}/notes")
 def notes(sid: str, b: NoteBody):
     return _wrap(actions.add_note, get_session(sid), b.target, b.kind, b.text, b.officer)
+
+
+@app.post("/api/sessions/{sid}/clarifications/draft")
+def draft_clarification(sid: str, b: ClarificationDraftBody):
+    return _wrap(actions.draft_clarification, get_session(sid), b.bidder, b.criterion_id, b.officer, b.llm_mode, b.model, b.effort)
+
+
+@app.post("/api/sessions/{sid}/clarifications/reply")
+def submit_reply(sid: str, b: ClarificationReplyBody):
+    return _wrap(actions.submit_clarification_reply, get_session(sid), b.bidder, b.criterion_id, b.vendor_reply, b.officer, b.llm_mode, b.model, b.effort)
+
+
+@app.get("/api/sessions/{sid}/clarifications")
+def get_clarifications(sid: str):
+    return get_session(sid).clarifications
 
 
 @app.post("/api/sessions/{sid}/attest-blind")

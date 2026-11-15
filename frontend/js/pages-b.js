@@ -29,7 +29,11 @@
       <div class="card rise matrix"><div class="scroll-x"><table class="t"><thead><tr><th>Bidder entity</th>${R.eligibility.map((e) => html`<th style="text-align:center" title="${e.criterion}">${e.id}</th>`)}<th>Verdict</th></tr></thead><tbody>
         ${names.map((n) => { const c = cm[n], dq = c.verdict === "DISQUALIFIED", b = S.bids.find((x) => x.name === n);
           return html`<tr class="${dq ? "dq" : ""}" data-name="${n.toLowerCase()}" data-state="${dq ? "dq" : "ok"}"><td><b class="nm">${n}</b><div class="tiny muted mono">${b.filename}</div></td>
-            ${c.checks.map((k, i) => html`<td class="cell"><button class="cellbtn ${k.status}" style="--i:${i}" data-cell="${n}|${k.id}"><span>${icon(k.status === "PASS" ? "check" : k.status === "FAIL" ? "x" : "alert", "sm")}</span><small>${k.extracted_value || k.status}</small></button></td>`)}
+            ${c.checks.map((k, i) => {
+              const clar = (S.clarifications || {})[`${n}:${k.id}`];
+              const clarBadge = clar ? (clar.vendor_reply ? " • clarified" : " • pending Q") : "";
+              return html`<td class="cell"><button class="cellbtn ${k.status}" style="--i:${i}" data-cell="${n}|${k.id}"><span>${icon(k.status === "PASS" ? "check" : k.status === "FAIL" ? "x" : "alert", "sm")}</span><small>${(k.extracted_value || k.status)}${clarBadge}</small></button></td>`;
+            })}
             <td>${pill(dq ? "red" : c.verdict === "ELIGIBLE" ? "green" : "amber", dq ? "DISQUALIFIED" : c.verdict.replace("_", " "))}</td></tr>`; })}</tbody></table></div></div>
       <div class="grid g3 stagger" style="margin-top:16px">${R.eligibility.slice(0, 6).map((e) => html`<div class="card"><div class="row"><b class="small" style="color:var(--blue-ink)">${e.id}</b><span class="grow"></span></div><p class="small" style="margin-top:6px">${e.criterion}</p><p class="tiny muted" style="margin-top:6px">Evidence: ${e.evidence_required || "-"}</p></div>`)}</div>`;
   };
@@ -43,17 +47,55 @@
     root.querySelectorAll("[data-cell]").forEach((b) => b.addEventListener("click", () => {
       root.querySelectorAll(".cellbtn.sel").forEach((x) => x.classList.remove("sel")); b.classList.add("sel");
       const [n, id] = b.dataset.cell.split("|"), k = S.compliance[n].checks.find((x) => x.id === id), target = `compliance:${n}:${id}`;
+      const clarKey = `${n}:${id}`;
+      const clar = (S.clarifications || {})[clarKey];
       const hist = S.human_actions.filter((h) => h.target === target);
       const tone = k.status === "PASS" ? "good" : k.status === "FAIL" ? "bad" : "warn";
       T.drawer.open(html`<div class="dh"><div class="grow"><div class="tiny" style="opacity:.75;letter-spacing:.8px">CRITERION DEEP DIVE</div><h3 style="font-size:18px;margin-top:4px">${k.id}: ${k.criterion}</h3><div class="small" style="opacity:.85;margin-top:3px">Bidder: ${n}</div></div><button class="btn sm" data-close>${icon("x", "sm")}</button></div>
         <div class="db"><div class="alert ${tone}">${icon(k.status === "PASS" ? "check" : "alert")}<div><b>${k.status}</b>${k.extracted_value ? " · " + k.extracted_value : ""}<div class="small" style="margin-top:4px">${k.reason}</div></div></div>
           <div><div class="tiny muted" style="font-weight:700;letter-spacing:.6px;margin-bottom:6px">EVIDENCE QUOTED FROM THE BID</div>${k.evidence_quote ? html`<div class="quote ${k.status === "FAIL" ? "bad" : ""}">“${k.evidence_quote}”<div class="ver">${verBadge(k.quote_verified)}</div></div>` : html`<div class="muted small">No quote was returned.</div>`}</div>
-          ${hist.length ? html`<div><div class="tiny muted" style="font-weight:700;letter-spacing:.6px;margin-bottom:6px">COMMITTEE RECORD</div><div class="col">${hist.map((h) => html`<div class="alert info small"><div><b>${h.type}</b> by ${h.by}${h.note ? ": " + h.note : ""}<div class="tiny muted">${T.dt(h.at)}</div></div></div>`)}</div></div>` : ""}
-          <div class="field"><label>Committee note (recorded in the audit trail)</label><textarea class="textarea" id="d-note" placeholder="Optional note…"></textarea></div></div>
+          ${k.status === "UNCLEAR" && !clar ? html`<div class="alert warn small" style="margin-top:12px">${icon("alert", "sm")}<div><b>Clarification Needed:</b> This mandatory criterion is unclear. Click "Draft Clarification" below to have the system draft a formal request to the bidder.</div></div>` : ""}
+          ${clar ? html`<div class="card" style="margin-top:12px;padding:12px;background:#f8fafc;border:1px solid var(--border-color);border-radius:6px">
+            <div class="tiny muted" style="font-weight:700;letter-spacing:.6px;margin-bottom:6px">CLARIFICATION INQUIRY</div>
+            <div class="quote" style="margin-bottom:8px"><b>Q:</b> ${clar.question}</div>
+            <div class="tiny muted" style="margin-bottom:10px">What is required: ${clar.what_is_needed || "Documentation"} · Drafted by: ${clar.officer}</div>
+            ${clar.vendor_reply ? html`<div class="quote" style="margin-bottom:8px;background:#eef6ff"><b>Vendor Reply:</b> ${clar.vendor_reply}<div class="tiny muted" style="margin-top:4px">${T.dt(clar.reply_at)}</div></div>
+              ${clar.rescore ? html`<div class="alert ${clar.rescore.status === 'PASS' ? 'good' : clar.rescore.status === 'FAIL' ? 'bad' : 'warn'} small"><div><b>Re-scored verdict: ${clar.rescore.status}</b>${clar.rescore.extracted_value ? " · " + clar.rescore.extracted_value : ""}<div class="tiny">${clar.rescore.reason}</div></div></div>` : ""}`
+            : html`<div class="field" style="margin-top:8px"><label style="font-weight:600">Enter Vendor's Response</label><textarea class="textarea" id="d-clar-reply" rows="3" placeholder="Paste vendor's clarification response here…"></textarea></div>`}
+          </div>` : ""}
+          ${hist.length ? html`<div style="margin-top:12px"><div class="tiny muted" style="font-weight:700;letter-spacing:.6px;margin-bottom:6px">COMMITTEE RECORD</div><div class="col">${hist.map((h) => html`<div class="alert info small"><div><b>${h.type}</b> by ${h.by}${h.note ? ": " + h.note : ""}<div class="tiny muted">${T.dt(h.at)}</div></div></div>`)}</div></div>` : ""}
+          <div class="field" style="margin-top:12px"><label>Committee note (recorded in the audit trail)</label><textarea class="textarea" id="d-note" placeholder="Optional note…"></textarea></div></div>
         <div class="df">${k.status === "FAIL" ? html`<button class="btn danger" data-k="concur">${icon("gavel", "sm")} Concur with finding</button>` : html`<button class="btn green" data-k="concur">${icon("check", "sm")} Concur with finding</button>`}
-          <button class="btn" data-k="clarification">Request clarification</button><button class="btn" data-k="note">Add note</button></div>`,
+          ${(k.status === "UNCLEAR" && !clar) ? html`<button class="btn blue" data-k="draft-clar">${icon("alert", "sm")} Draft Clarification</button>` : ""}
+          ${(clar && !clar.vendor_reply) ? html`<button class="btn blue" data-k="submit-clar">${icon("check", "sm")} Submit Reply & Re-score</button>` : ""}
+          <button class="btn" data-k="note">Add note</button></div>`,
         (w) => w.querySelectorAll("[data-k]").forEach((a) => a.addEventListener("click", async () => {
-          if (await post("notes", { target, kind: a.dataset.k, text: w.querySelector("#d-note").value, officer: T.officer() }, "Recorded in audit trail")) T.drawer.close();
+          const kind = a.dataset.k;
+          if (kind === "draft-clar") {
+            a.disabled = true; a.textContent = "Drafting with AI…";
+            try {
+              T.state.session = await T.api.post(`/api/sessions/${S.id}/clarifications/draft`, { bidder: n, criterion_id: id, officer: T.officer() });
+              T.toast("Clarification question drafted", "ok");
+              T.refreshChrome(); T.render(true); T.drawer.close();
+            } catch (err) {
+              T.toast(err.message, "err", 6000);
+              a.disabled = false; a.textContent = "Draft Clarification";
+            }
+          } else if (kind === "submit-clar") {
+            const reply = w.querySelector("#d-clar-reply")?.value?.trim();
+            if (!reply) { T.toast("Please enter vendor's reply first.", "err"); return; }
+            a.disabled = true; a.textContent = "Re-scoring…";
+            try {
+              T.state.session = await T.api.post(`/api/sessions/${S.id}/clarifications/reply`, { bidder: n, criterion_id: id, vendor_reply: reply, officer: T.officer() });
+              T.toast(`Criterion ${id} re-scored successfully`, "ok");
+              T.refreshChrome(); T.render(true); T.drawer.close();
+            } catch (err) {
+              T.toast(err.message, "err", 6000);
+              a.disabled = false; a.textContent = "Submit Reply & Re-score";
+            }
+          } else {
+            if (await post("notes", { target, kind, text: w.querySelector("#d-note").value, officer: T.officer() }, "Recorded in audit trail")) T.drawer.close();
+          }
         })));
     }));
   };

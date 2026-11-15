@@ -74,6 +74,14 @@
         ${S.status === "running" ? pill("blue", "Running", "dot live") : S.status === "error" ? pill("red", "Error") : S.status === "complete" ? pill("green", "Pipeline complete") : pill("gray", "Not started")}</div>
         ${S.error ? html`<div class="alert bad" style="margin-bottom:10px">${icon("alert")}<div>${S.error}</div></div>` : ""}${stepper}</div>
 
+      ${(() => {
+        const clars = Object.values(S.clarifications || {});
+        const pending = clars.filter((c) => !c.vendor_reply).length;
+        const resolved = clars.filter((c) => c.vendor_reply).length;
+        if (!clars.length) return "";
+        return html`<div class="alert info rise" style="margin-top:16px">${icon("info", "sm")}<div><b>Clarification Loop:</b> ${pending ? html`<span style="color:var(--amber);font-weight:700">${pending} question(s) awaiting vendor reply</span>` : "All queries resolved."} ${resolved ? `(${resolved} criterion re-scored)` : ""} — <a href="#/compliance" style="text-decoration:underline">Open Compliance Matrix</a></div></div>`;
+      })()}
+
       ${ran ? html`<div class="grid g4 stagger" style="margin:16px 0">
         <div class="card kpi"><div class="lab">Bids received<span class="ico">${icon("file")}</span></div><div class="big"><span data-count="${S.bids.length}">0</span><small>bidders</small></div><div class="sub">All documents hashed (SHA-256) on intake</div></div>
         <div class="card kpi"><div class="lab">Eligible bids<span class="ico">${icon("compliance")}</span></div><div class="big"><span data-count="${eligible}">0</span><small>passed E-criteria</small></div><div class="sub">${dq.length ? html`<span style="color:var(--red)">${dq.length} disqualified: ${dq.map((n) => n.split(" ")[0]).join(", ")}</span>` : "None disqualified"}</div></div>

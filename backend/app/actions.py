@@ -116,3 +116,92 @@ def regenerate_report(s):
     s.add_audit("Report", "report_regenerated", {"chars": len(s.report_md)})
     store.save(s)
     return s.to_public()
+
+
+def draft_clarification(s, bidder: str, criterion_id: str, officer: str, llm_mode: str, model: str, effort: str):
+    """LLM drafts a formal clarification question for an UNCLEAR criterion."""
+    from .agents.clarification import draft_question
+    _need_complete(s)
+    if s.approval:
+        raise ActionError("Evaluation already signed off.", 409)
+    comp = s.compliance.get(bidder)
+    if not comp:
+        raise ActionError(f"Bidder '{bidder}' not found.", 404)
+    check = next((c for c in comp["checks"] if c["id"] == criterion_id), None)
+    if not check:
+        raise ActionError(f"Criterion '{criterion_id}' not found for bidder '{bidder}'.", 404)
+    if check["status"] != "UNCLEAR":
+        raise ActionError(f"Criterion {criterion_id} is {check['status']}, not UNCLEAR — clarification only applies to UNCLEAR criteria.")
+    officer = (officer or "").strip() or "Evaluation Officer"
+    llm = LLM(llm_mode or s.mode, model or s.settings["model"], effort or s.settings["reasoning_effort"], on_event=s.add_audit)
+    result = draft_question(llm, {"id": criterion_id, "criterion": check["criterion"], "evidence_required": ""}, bidder, check.get("evidence_quote", ""))
+    key = f"{bidder}:{criterion_id}"
+    with s.lock:
+        s.clarifications[key] = {
+            "bidder": bidder,
+            "criterion_id": criterion_id,
+            "criterion": check["criterion"],
+            "question": result["question"],
+            "what_is_needed": result["what_is_needed"],
+            "drafted_at": now_iso(),
+            "officer": officer,
+            "vendor_reply": None,
+            "reply_at": None,
+            "rescore": None,
+        }
+    s.human_actions.append({"type": "clarification_drafted", "target": f"compliance:{bidder}:{criterion_id}", "by": officer, "note": result["question"][:200], "at": now_iso()})
+    s.add_audit("ClarificationAgent", "question_drafted", {"bidder": bidder, "criterion_id": criterion_id, "question": result["question"], "by": officer})
+    store.save(s)
+    return s.to_public()
+
+
+def submit_clarification_reply(s, bidder: str, criterion_id: str, vendor_reply: str, officer: str, llm_mode: str, model: str, effort: str):
+    """Accept vendor reply, re-score the criterion, update compliance verdict."""
+    from .agents.clarification import rescore_criterion
+    from .agents import scoring as _scoring
+    _need_complete(s)
+    if s.approval:
+        raise ActionError("Evaluation already signed off.", 409)
+    if not vendor_reply or not vendor_reply.strip():
+        raise ActionError("vendor_reply cannot be empty.")
+    key = f"{bidder}:{criterion_id}"
+    clar = s.clarifications.get(key)
+    if not clar:
+        raise ActionError(f"No clarification was drafted for {bidder}:{criterion_id}. Draft it first.", 404)
+    comp = s.compliance.get(bidder)
+    if not comp:
+        raise ActionError(f"Bidder '{bidder}' not found.", 404)
+    check = next((c for c in comp["checks"] if c["id"] == criterion_id), None)
+    if not check:
+        raise ActionError(f"Criterion '{criterion_id}' not found.", 404)
+    officer = (officer or "").strip() or "Evaluation Officer"
+    # Get original bid text
+    bid_text = (s.bids.get(bidder) or {}).get("text", "")
+    llm = LLM(llm_mode or s.mode, model or s.settings["model"], effort or s.settings["reasoning_effort"], on_event=s.add_audit)
+    criterion_obj = {"id": criterion_id, "criterion": check["criterion"], "evidence_required": ""}
+    new_check = rescore_criterion(llm, criterion_obj, bidder, check.get("evidence_quote", ""), vendor_reply, bid_text)
+    with s.lock:
+        # Update the clarification record
+        clar["vendor_reply"] = vendor_reply.strip()
+        clar["reply_at"] = now_iso()
+        clar["rescore"] = new_check
+        clar["officer"] = officer
+        # Update the compliance check in-place
+        for i, c in enumerate(comp["checks"]):
+            if c["id"] == criterion_id:
+                comp["checks"][i] = new_check
+                break
+        # Recalculate verdict
+        checks = comp["checks"]
+        if any(c["status"] == "FAIL" for c in checks):
+            comp["verdict"] = "DISQUALIFIED"
+        elif any(c["status"] == "UNCLEAR" for c in checks):
+            comp["verdict"] = "NEEDS_HUMAN_REVIEW"
+        else:
+            comp["verdict"] = "ELIGIBLE"
+        # Re-rank
+        _rerank(s)
+    s.human_actions.append({"type": "clarification_reply_submitted", "target": f"compliance:{bidder}:{criterion_id}", "by": officer, "note": f"Re-scored to {new_check['status']}", "at": now_iso()})
+    s.add_audit("ClarificationAgent", "criterion_rescored", {"bidder": bidder, "criterion_id": criterion_id, "new_status": new_check["status"], "by": officer})
+    store.save(s)
+    return s.to_public()

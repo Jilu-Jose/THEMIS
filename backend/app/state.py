@@ -45,6 +45,7 @@ class Session:
         self.approval = None
         self.blind_attested = None
         self.identities_revealed = False
+        self.clarifications = {}   # key: f"{bidder}:{criterion_id}"
 
     def reset_results(self):
         self.stages = [{"id": i, "label": l, "status": "pending", "summary": "", "seconds": None} for i, l in STAGES]
@@ -112,6 +113,7 @@ class Session:
                 "aliases": self.aliases, "agent_stats": self.agent_stats,
                 "blind_attested": self.blind_attested, "identities_revealed": self.identities_revealed,
                 "audit_len": len(self.audit), "event_count": len(self.events),
+                "clarifications": self.clarifications,
             }
 
     def to_disk(self):
@@ -126,7 +128,8 @@ class Session:
         s = cls(d["id"])
         for k in ("created_at", "status", "error", "mode", "settings", "stages", "rubric", "compliance", "technical",
                   "financial", "risk_flags", "decisions", "ranking", "report_md", "report_stale", "approval",
-                  "human_actions", "aliases", "agent_stats", "blind_attested", "identities_revealed", "audit"):
+                  "human_actions", "aliases", "agent_stats", "blind_attested", "identities_revealed", "audit",
+                  "clarifications"):
             setattr(s, k, d.get(k, getattr(s, k)))
         if d.get("tender"):
             s.tender = {**d["tender"], "text": d.get("tender_text", "")}

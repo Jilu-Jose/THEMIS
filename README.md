@@ -2,149 +2,230 @@
 
 **Tender Human-in-the-loop Evaluation & Misconduct Inspection System**
 
-A multi-agent AI committee that evaluates public-procurement bids: eligibility checks, blind technical scoring, price verification, fraud detection, QCBS ranking and a tamper-evident audit trail. The AI recommends and a human decides.
+A multi-agent AI system that automates public-procurement evaluation under India's General Financial Rules (GFR 2017): eligibility verification, blind technical scoring, price schedule recomputation, fraud/collusion detection, QCBS ranking, human-in-the-loop clarification loops, and a tamper-evident SHA-256 audit trail. Built using **Microsoft Semantic Kernel** and powered by high-throughput Groq models (`openai/gpt-oss-120b`).
 
 ![Dashboard](docs/screenshots/dashboard.png)
 
-## Quick start
+---
 
-**Requirements:** Python 3.10+ (nothing else; the frontend has no build step).
+## Key Features & Innovations
 
+### 1. Multi-Agent Collaborative Architecture (Fan-out / Fan-in)
+The system coordinates specialized autonomous agents executing through Microsoft Semantic Kernel plugins:
+- **Tender Requirements Retrieval Agent:** Parses tender notices into formal JSON rubrics with mandatory eligibility criteria ($E_1 \dots E_n$), weighted technical criteria ($T_1 \dots T_m$), and QCBS weights.
+- **Compliance Scrutiny Agent:** Performs grounded BM25 RAG retrieval over each bidder's submission. Every verdict (`PASS`, `FAIL`, `UNCLEAR`) is anchored to a verbatim cited quote from the bid, verified by string search.
+- **Technical Evaluator Agent (Rubric Critic):** Evaluates proposals against technical rubrics using blind anonymization (`Bidder-A`, `Bidder-B`). Identities are cryptographically masked until unblinded by human committee action.
+- **Financial Evaluator Agent:** Extracts unit prices and quantities, and executes deterministic Python arithmetic tools to recompute line items and verify quoted totals.
+- **Risk & Collusion Agent:** Scans for text plagiarism across bids using 5-word shingle Jaccard similarity, detects abnormally low/high price outliers against median benchmarks, and flags ghost project claims.
+- **Chair & Procurement Manager Agent:** Ranks qualified bidders using Quality and Cost Based Selection (QCBS), drafts formal rulings for each risk flag, and recommends contract awards.
+- **Clarification Loop Agent:** Detects `UNCLEAR` mandatory requirements, drafts formal vendor clarification notices, and automatically re-scores submissions upon receipt of vendor replies.
+
+```
+                    ┌──────────────────────────┐
+                    │      Tender Document     │
+                    └────────────┬─────────────┘
+                                 │
+                                 ▼
+                    ┌──────────────────────────┐
+                    │  Tender Parser (Rubric)  │
+                    └────────────┬─────────────┘
+                                 │
+             ┌───────────────────┴───────────────────┐
+             │       FAN-OUT (Parallel Execution)    │
+             ▼                                       ▼
+    ┌─────────────────┐                     ┌─────────────────┐
+    │ Compliance Agent│                     │ Compliance Agent│
+    │   (Bidder 1)    │                     │   (Bidder N)    │
+    └────────┬────────┘                     └────────┬────────┘
+             │                                       │
+             │ (If UNCLEAR: Clarification Loop)      │
+             ▼                                       ▼
+    ┌─────────────────┐                     ┌─────────────────┐
+    │ Technical Agent │                     │ Technical Agent │
+    │ (Blind Critic)  │                     │ (Blind Critic)  │
+    └────────┬────────┘                     └────────┬────────┘
+             │                                       │
+             └───────────────────┬───────────────────┘
+                                 │
+                                 ▼ FAN-IN
+                    ┌──────────────────────────┐
+                    │ Financial Evaluator Tool │
+                    │  (Arithmetic Recompute)  │
+                    └────────────┬─────────────┘
+                                 │
+                                 ▼
+                    ┌──────────────────────────┐
+                    │   Risk & Fraud Detector  │
+                    │ (Collusion & Outliers)   │
+                    └────────────┬─────────────┘
+                                 │
+                                 ▼
+                    ┌──────────────────────────┐
+                    │  Chair & QCBS Ranking    │
+                    │   (Award Recommendation) │
+                    └────────────┬─────────────┘
+                                 │
+                                 ▼
+                    ┌──────────────────────────┐
+                    │  Human Committee Sign-off│
+                    │  (SHA-256 Sealed Audit)  │
+                    └──────────────────────────┘
+```
+
+---
+
+### 2. Framework-Based Development: Microsoft Semantic Kernel
+The agent system is built on **Microsoft Semantic Kernel (v1.47.0)** (`backend/app/sk_kernel.py`):
+- **Core AI Connector:** Integrated with Groq's OpenAI-compatible chat completion service (`OpenAIChatCompletion`) running `openai/gpt-oss-120b`.
+- **Specialized Kernel Plugins:**
+  - `RetrievalPlugin`: Grounded BM25 search and quote verification tools registered via `@kernel_function`.
+  - `FinancialArithmeticPlugin`: Exact deterministic line-item multiplication and summation tools preventing LLM math hallucinations.
+  - `TenderParserPlugin`: Prompt formatting and rubric generation.
+  - `ClarificationAgentPlugin`: Formal vendor inquiry formatting and criterion re-scoring.
+- **Framework Telemetry:** Exposed via `/api/health` displaying active plugins and Semantic Kernel version.
+
+---
+
+### 3. Automated Human-in-the-Loop Clarification Loop
+When a bidder's documentation is ambiguous on a mandatory eligibility requirement, the system does not prematurely disqualify or guess. Instead, it enters an automated clarification cycle:
+1. **Trigger:** The Compliance Agent flags a criterion as `UNCLEAR` (verdict: `NEEDS_HUMAN_REVIEW`).
+2. **AI Question Drafting:** The Clarification Agent (`backend/app/agents/clarification.py`) drafts a formal, legally grounded clarification letter specifying:
+   - The exact tender clause and requirement.
+   - The specific document or certificate missing.
+   - The required format of the response.
+3. **Human Action:** The Evaluation Officer reviews the drafted question in the Compliance Matrix drawer and submits the vendor's reply.
+4. **Automated Re-Scoring:** The Clarification Agent retrieves evidence combining the original bid and the vendor's clarification statement, re-evaluating the criterion to `PASS`, `FAIL`, or `UNCLEAR`.
+5. **State Cascade:** If all criteria pass, the bidder's status automatically promotes to `ELIGIBLE` and triggers a recalculation of QCBS rankings.
+6. **Audit Hash Chain:** Every stage (question drafted, reply submitted, re-score rendered) is permanently written to the tamper-evident SHA-256 audit ledger.
+
+---
+
+### 4. 5-Tender Synthetic Benchmark Suite
+To validate evaluation accuracy and fraud detection, T.H.E.M.I.S includes a 5-tender benchmark dataset (`backend/app/benchmark_data.py`) spanning different procurement sectors, with 3–4 synthetic bids each and designated winning bids:
+
+| # | Sector & Tender Title | Issuing Body | Bids | Designated Winner | Planted Issues & Disqualifications |
+|---|---|---|:---:|---|---|
+| **1** | **IoT Water Quality Telemetry** (PHED/IOT/2026/017) | Dept of Rural Water Supply, Punjab | 4 | `SecureFlow Technologies` | • `HydroNova`: Turnover below threshold, missing ISO 9001 (**Disqualified**)<br>• `AquaSense`: Text plagiarized from SecureFlow, abnormally low price<br>• `BlueRiver`: Price table line-item sum mismatch |
+| **2** | **Rural Road Network (45 km)** (PWD/ROAD/2026/042) | Public Works Dept, Himachal Pradesh | 3 | `RoadBuild Pro Pvt Ltd` | • `ConstructEase`: Turnover INR 12 Cr vs 20 Cr threshold (**Disqualified**)<br>• `Pavement Masters`: Ambiguous bank solvency certificate |
+| **3** | **Citizen Services IT Portal** (NIC/GOV/2026/089) | National Informatics Centre (MeitY) | 4 | `TechForge Solutions` | • `DevNest Technologies`: Missing GST registration certificate (**Disqualified**)<br>• `SoftWave India`: Near-identical plagiarized technical proposal<br>• `CodeMatrix`: INR 16.6 Cr discrepancy in quoted total |
+| **4** | **Medical Diagnostic Equipment** (AIIMS/MED/2026/156) | AIIMS, New Delhi | 3 | `MedSupply Pharma` | • `HealthFirst Devices`: ISO 13485 certificate expired (**Disqualified**)<br>• `CurePoint India`: Abnormally low price (58% below median) |
+| **5** | **Rooftop Solar PV (10 MW)** (MNRE/SOLAR/2026/203) | Ministry of New & Renewable Energy | 4 | `SolarEdge Power` | • `GreenVolt Systems`: Debarment self-declaration missing (**Disqualified**)<br>• `PhotonWorks`: INR 44.5 Cr arithmetic total error<br>• `SunRay Infra`: Ambiguous plant commissioning certificates |
+
+#### Benchmark Runner (`backend/benchmark.py`)
+Run the automated benchmark across all 5 tenders or individual tenders:
 ```bash
-# macOS / Linux
-./run.sh
+# Run all 5 tenders
+cd backend
+.\.venv\Scripts\python benchmark.py
+
+# Run a specific tender (e.g. Tender 3)
+.\.venv\Scripts\python benchmark.py --tender 3
+
+# Export detailed benchmark report as JSON
+.\.venv\Scripts\python benchmark.py --output benchmark_results.json
+```
+The script evaluates:
+- **Top-Ranked Winner Accuracy:** Verifies whether the committee's QCBS Rank #1 matches the known winner.
+- **Disqualification Detection Rate:** Verifies that 100% of non-compliant bids are disqualified with exact clause citations ($E_1 \dots E_7$).
+
+---
+
+## Quick Start
+
+### Prerequisites
+- Python 3.10+ (Windows, macOS, or Linux)
+- A Groq API key (`https://console.groq.com`)
+
+### 1. Setup & Launch
+```bash
+# Clone the repository
+git clone https://github.com/your-org/themis.git
+cd themis
 
 # Windows
 run.bat
+
+# macOS / Linux
+./run.sh
+```
+The script creates the `.venv`, installs dependencies (including `semantic-kernel` and `fastapi`), and starts the server at **http://localhost:8000**.
+
+### 2. Configure Groq API Key
+Add your key to `.env`:
+```env
+GROQ_API_KEY=gsk_your_groq_api_key_here
+THEMIS_MODEL=openai/gpt-oss-120b
 ```
 
-Open **http://localhost:8000**. The first run creates a virtualenv and installs dependencies.
+---
 
-### Use Groq (gpt-oss)
+## System Architecture & Workflow
 
-1. Create a key at https://console.groq.com
-2. Put it in `.env` (created from `.env.example` on first run):
-   ```
-   GROQ_API_KEY=gsk_...
-   ```
-3. Restart. The top bar shows **Groq · gpt-oss** instead of **Demo engine**.
+1. **Intake & Hashing:** Upload tender notice and bidder proposals (`.pdf`, `.txt`, `.md`). Each document is hashed (SHA-256) on upload.
+2. **Tender Rubric Extraction:** Extracts qualification rules, passing scores, and evaluation weights.
+3. **Parallel Compliance Scrutiny:** Runs BM25 RAG over all bids in parallel; checks incorporation, turnover, prior experience, GST/PAN, ISO certifications, EMD, and non-blacklisting declarations.
+4. **Blind Technical Evaluation:** Evaluates methodology, team, hardware/software specs, timelines, and maintenance plans on anonymized text.
+5. **Deterministic Price Recomputation:** Arithmetic tools re-calculate each bidder's line items ($\text{Qty} \times \text{Unit Price}$) and compare with stated totals.
+6. **Misconduct & Risk Inspection:** Scans for text collusion, abnormally low pricing (predatory bidding), and arithmetic manipulation.
+7. **Chair Decisions:** Rulings are issued for all flags (`NO_ACTION`, `REQUEST_CLARIFICATION`, `PENALIZE_10`, `PENALIZE_25`, `RECOMMEND_DISQUALIFY`).
+8. **QCBS Formula Scoring:**
+   $$\text{Final Score} = (\text{Technical Score} \times W_{\text{tech}}) + \left(\frac{\text{Lowest Price}}{\text{Bidder Price}} \times 100 \times W_{\text{fin}}\right)$$
+9. **Human Committee Approval:** The evaluation officer reviews rulings, resolves blockers, and applies a cryptographically sealed approval stamp.
+10. **Tamper-Evident Audit Verification:** Every action is linked in a SHA-256 hash chain that can be independently verified with one click.
 
-Models: `openai/gpt-oss-120b` (default) or `openai/gpt-oss-20b`, selectable per run along with the reasoning effort.
+---
 
-### Offline demo mode (no key needed)
+## API Endpoints
 
-Without `GROQ_API_KEY` a **rule-based engine stands in for the LLM** (regex and counting heuristics on the same payloads). It exists so you can explore the whole app, and so the tests run offline. The pipeline, UI, audit chain and approvals are real, but the scores in demo mode come from simple heuristics, not a language model. The UI says so wherever it matters.
-
-## Try it in 60 seconds
-
-1. **New Evaluation** > **Load demo data**: a synthetic tender and four bids with planted issues.
-2. **Run Evaluation Committee**: watch the agents work in the live overlay.
-3. Open the screens and see what the committee caught:
-
-| Bid | Planted issue | Where it shows |
+| Method | Endpoint | Description |
 |---|---|---|
-| SecureFlow | Clean, submitted first | Ranked L1 |
-| HydroNova | Turnover below threshold, ISO certificate missing | Compliance matrix (E2, E5 fail) |
-| AquaSense | Copied technical text, abnormally low price, claims projects it never lists | Risk & Fraud, Chair rulings |
-| BlueRiver | Stated total does not match its own line items | Financial analysis |
+| `GET` | `/api/health` | System status, Groq connection, and Semantic Kernel plugins |
+| `GET` | `/api/sessions` | List all evaluation sessions |
+| `POST` | `/api/sessions` | Multipart upload for tender and bidder files |
+| `POST` | `/api/sessions/demo` | Staging of demo evaluation session |
+| `POST` | `/api/sessions/{id}/run` | Starts multi-agent evaluation pipeline |
+| `GET` | `/api/sessions/{id}/events` | Server-Sent Events (SSE) live execution stream |
+| `GET` | `/api/sessions/{id}` | Complete evaluation data (rubric, compliance, technical, rankings) |
+| `POST` | `/api/sessions/{id}/clarifications/draft` | AI drafts formal clarification question for unclear criterion |
+| `POST` | `/api/sessions/{id}/clarifications/reply` | Submits vendor response and triggers automatic criterion re-scoring |
+| `GET` | `/api/sessions/{id}/clarifications` | Returns all drafted questions, vendor replies, and re-scored verdicts |
+| `POST` | `/api/sessions/{id}/rulings` | Concur or override Chair risk rulings |
+| `POST` | `/api/sessions/{id}/approval` | Final committee sign-off (gated against unresolved blockers) |
+| `DELETE` | `/api/sessions/{id}` | Deletes run data to start fresh evaluation |
+| `GET` | `/api/sessions/{id}/audit/verify` | Recomputes SHA-256 audit ledger from genesis block |
+| `GET` | `/api/sessions/{id}/export/{kind}` | Export `report.md`, `ranking.csv`, `audit.json`, or `full.json` |
 
-4. **Chair Decisions**: concur with or override the Chair's rulings (the ranking recalculates).
-5. **Final Ranking & Approval**: sign off. Approval is blocked until every recommended disqualification has a human decision.
-6. **Report & Audit Log**: read the report and verify the hash chain.
+---
 
-To test with your own documents, use **New Evaluation** and upload a tender plus one file per bidder (PDF, TXT or MD). `sample_data/` holds the demo files in upload form.
+## Automated Test Suite
 
-## The committee
-
-| Agent | Role | LLM? |
-|---|---|---|
-| Tender Parser | Tender document to structured rubric (criteria, weights, cut-off) | yes |
-| Compliance | Pass/fail per mandatory criterion with a quoted, **verified** evidence passage (BM25 retrieval) | yes |
-| Technical Evaluator | Scores each criterion on **anonymised** bids, citing evidence | yes |
-| Financial Evaluator | Extracts price schedules; **every total is recomputed in Python** | extraction only |
-| Risk / Fraud | Copied text (5-word shingles), price outliers vs median, arithmetic errors, inconsistent claims | partly |
-| Chair | Maps each flag to one action from a fixed list; humans concur or override | yes |
-| QCBS Scoring | Weighted technical + financial score and ranking | **no** |
-| Report | Writes the report from recorded results only | yes |
-
-```
-Tender -> Parser -> Compliance -> Technical (blind) -> Financial -> Risk -> Chair -> QCBS -> Report -> Human approval
-```
-
-## Design principles
-
-- **Evidence-grounded:** every verdict and score carries a quote, and the backend checks each quote actually occurs in the document (the UI shows "Quote verified" or a warning).
-- **No LLM arithmetic:** totals, price ratios, QCBS scores and rankings are plain Python.
-- **Blind technical scoring:** bidder names are replaced with Bidder-A, B, C… before the technical agent sees the text. Revealing identities is a logged action.
-- **Bounded Chair:** the Chair can only choose `NO_ACTION`, `REQUEST_CLARIFICATION`, `PENALIZE_10`, `PENALIZE_25` or `RECOMMEND_DISQUALIFY`.
-- **Prompt-injection guard:** bid text is treated as data in every agent prompt, and all LLM text is HTML-escaped in the UI.
-- **Human in the loop:** concur/override rulings, attest blind scores, add notes, then approve or reject. Approval is hash-sealed.
-- **Tamper-evident audit:** every event is appended to a SHA-256 hash chain; **Verify chain** recomputes it.
-- **Faithful to the tender rules:** financial envelopes are opened only for technically qualified bidders, and arithmetic errors are corrected by recomputing from unit prices.
-
-## UI and animations
-
-Dashboard, New Evaluation, Tender Rubric, Compliance Matrix, Technical Scoring, Financial Analysis, Risk & Fraud, Chair Decisions, Final Ranking & Approval, Report & Audit Log.
-
-Animated feedback when something executes: a full-screen run overlay with a live agent stepper and streaming terminal (Server-Sent Events), an animated pipeline stepper, count-up KPIs, growing bars and donut charts, staggered table and card reveals, pop-in heat-map cells, a sliding evidence drawer, toasts, button ripples, a sequential hash-chain verification sweep and a stamp animation on sign-off. All animation respects `prefers-reduced-motion`.
-
-## Project layout
-
-```
-THEMIS/
-├── run.sh / run.bat          one-command start
-├── .env.example              GROQ_API_KEY, model, demo switches
-├── backend/
-│   ├── requirements.txt
-│   ├── app/
-│   │   ├── main.py           FastAPI routes + SSE + static hosting
-│   │   ├── pipeline.py       orchestrator (parallel per bidder, streams progress)
-│   │   ├── actions.py        human rulings, notes, approval, report refresh
-│   │   ├── state.py          sessions, hash-chained audit log, persistence
-│   │   ├── llm.py            Groq client (retries, JSON-mode fallback) + demo switch
-│   │   ├── mock_engine.py    offline rule-based stand-in for the LLM
-│   │   ├── documents.py      PDF/text loading, BM25 retrieval, quote verification
-│   │   ├── demo_data.py      synthetic tender + 4 bids
-│   │   └── agents/           parser, compliance, technical, financial, risk, chair, scoring, report
-│   └── tests/                8 tests (pipeline, gating, audit tamper, upload, Groq path with a fake client)
-├── frontend/                 no build step: index.html, css/styles.css, js/*.js
-├── sample_data/              demo tender + bids as uploadable files
-└── docs/                     screenshots, original prototype notebook
-```
-
-## API (selected)
-
-| Method | Path | Purpose |
-|---|---|---|
-| GET | `/api/health` | mode (groq/demo), models, defaults |
-| POST | `/api/sessions/demo` | stage the demo tender and bids |
-| POST | `/api/sessions` | multipart upload: `tender`, `bids[]`, `meta` |
-| POST | `/api/sessions/{id}/run` | start the committee (optional `settings`) |
-| GET | `/api/sessions/{id}/events` | SSE progress stream |
-| GET | `/api/sessions/{id}` | full results |
-| POST | `/api/sessions/{id}/rulings` | concur / override a Chair ruling |
-| POST | `/api/sessions/{id}/approval` | approve or reject (gated) |
-| GET | `/api/sessions/{id}/audit/verify` | verify the hash chain |
-| GET | `/api/sessions/{id}/export/{report.md,ranking.csv,audit.json,full.json}` | exports |
-
-Interactive docs: http://localhost:8000/docs
-
-## Tests
+Run the full pytest suite (10 tests covering the pipeline, security, Semantic Kernel, and benchmark data structure):
 
 ```bash
-cd backend && pip install -r requirements.txt && pytest -q
+cd backend
+.\.venv\Scripts\python -m pytest -v
 ```
 
-## Limitations (please read)
+Expected output:
+```
+tests/test_groq_path.py::test_groq_agents_parse_and_pass_model_and_effort PASSED
+tests/test_groq_path.py::test_retry_after_rate_limit PASSED
+tests/test_groq_path.py::test_json_mode_rejected_falls_back_to_plain_parsing PASSED
+tests/test_groq_path.py::test_gives_up_after_retries PASSED
+tests/test_pipeline.py::test_run_requires_api_key PASSED
+tests/test_pipeline.py::test_upload_path_and_exports PASSED
+tests/test_pipeline.py::test_delete_session PASSED
+tests/test_pipeline.py::test_benchmark_data_structure PASSED
+tests/test_pipeline.py::test_clarification_state_and_endpoints PASSED
+tests/test_pipeline.py::test_semantic_kernel_integration PASSED
 
-- **Prototype, not a certified procurement system.** It does not implement any statutory process, digital signatures or access control, and it must not be used to make real awards.
-- **Groq path:** the code path (parsing, retries, JSON-mode fallback, model and effort parameters) is tested against a fake client. It has not been exercised against the live Groq API, so check the first real run and adjust prompts or `temperature` if your documents need it.
-- **Demo engine is heuristic.** Its numbers illustrate the workflow and are not LLM judgments.
-- **Text only:** scanned PDFs are rejected (no OCR). Section detection looks for headings such as "Technical Proposal", "Financial Bid" and "Eligibility Documents" and falls back to the whole document when they are missing.
-- **Single user, in-memory with JSON snapshots** in `backend/data/sessions/`. There is no login; the officer name is a label stored in the browser.
-- **Submission time matters.** When two bids share text, the later one is treated as the likely copier. For uploads, set the real submission times on the intake screen.
-- Rankings depend on committee overrides: for example, overriding a disqualification recommendation can put a very low-priced bid first. The system records that decision; it does not second-guess it.
+======================== 10 passed in 6.79s ========================
+```
 
-## Prototype notebook
+---
 
-`docs/prototype_notebook.ipynb` is the single-file notebook version of the same committee, useful for experimenting with prompts.
+## Governance & Safety Notice
+
+- **Human-in-the-Loop:** AI agents generate findings and recommendations; final award authority remains strictly with the human Tender Evaluation Committee.
+- **Statutory Prototype:** Developed as a prototype for autonomous scrutiny and fraud detection under GFR 2017 principles. Not certified for statutory public tender awards without human oversight.
+- **Data Confidentiality:** Bids are evaluated in an isolated session scope with blind anonymization during technical scoring to eliminate evaluator bias.
