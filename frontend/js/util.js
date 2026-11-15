@@ -78,7 +78,7 @@
     }
     return r.status === 204 ? null : r.json();
   }
-  T.api = { get: (u) => call("GET", u), post: (u, b) => call("POST", u, b ?? {}), form: (u, f) => call("POST", u, f, true) };
+  T.api = { get: (u) => call("GET", u), post: (u, b) => call("POST", u, b ?? {}), form: (u, f) => call("POST", u, f, true), del: (u) => call("DELETE", u) };
 
   // ---------------------------------------------------------------- toasts
   T.toast = (msg, kind = "info", ms = 3800) => {

@@ -165,5 +165,24 @@ class Store:
         except Exception:
             pass
 
+    def delete(self, sid):
+        with self.lock:
+            self.sessions.pop(sid, None)
+            f = config.SESSIONS_DIR / f"{sid}.json"
+            if f.exists():
+                try:
+                    f.unlink()
+                except Exception:
+                    pass
+
+    def clear(self):
+        with self.lock:
+            self.sessions.clear()
+            for f in config.SESSIONS_DIR.glob("*.json"):
+                try:
+                    f.unlink()
+                except Exception:
+                    pass
+
 
 store = Store()

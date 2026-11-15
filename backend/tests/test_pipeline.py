@@ -31,3 +31,12 @@ def test_upload_path_and_exports():
 
     bad = client.post("/api/sessions", files=[("tender", ("t.exe", b"x", "x")), ("bids", ("b.md", b"y", "x"))])
     assert bad.status_code == 400
+
+
+def test_delete_session():
+    """Verify session deletion endpoint removes data properly."""
+    sid = client.post("/api/sessions/demo").json()["id"]
+    assert client.get(f"/api/sessions/{sid}").status_code == 200
+    r = client.delete(f"/api/sessions/{sid}")
+    assert r.status_code == 200 and r.json()["deleted"] is True
+    assert client.get(f"/api/sessions/{sid}").status_code == 404

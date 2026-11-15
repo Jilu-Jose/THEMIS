@@ -22,6 +22,15 @@ app = FastAPI(title="T.H.E.M.I.S", version="1.0.0",
               description="Tender Human-in-the-loop Evaluation & Misconduct Inspection System")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
+
+@app.middleware("http")
+async def add_no_cache_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
 MAX_BYTES = 25 * 1024 * 1024
 ALLOWED = (".pdf", ".txt", ".md")
 
@@ -128,6 +137,18 @@ async def create_session(tender: UploadFile = File(...), bids: list[UploadFile] 
 @app.get("/api/sessions/{sid}")
 def get_one(sid: str):
     return get_session(sid).to_public()
+
+
+@app.delete("/api/sessions/{sid}")
+def delete_session(sid: str):
+    store.delete(sid)
+    return {"deleted": True, "id": sid}
+
+
+@app.delete("/api/sessions")
+def clear_all_sessions():
+    store.clear()
+    return {"cleared": True}
 
 
 class RunBody(BaseModel):

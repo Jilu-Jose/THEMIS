@@ -57,8 +57,12 @@
         <div class="row wrap">${pill("navy", "Tender No: " + (R?.tender_id || "-"))}${pill("blue", "LLM: " + S.settings.model)}${S.settings.blind_technical ? pill("blue", "Blind technical evaluation") : ""}</div>
         <h1>${R?.title || S.tender?.filename || "Untitled tender"}</h1>
         <div class="muted">${R?.issuer || "Documents staged. Run the evaluation to extract the rubric."}</div></div>
-        <div class="col no-print" style="align-items:flex-end"><a class="btn" href="#/report?tab=audit">${icon("hash")} View Audit Trail</a>
-          ${ran ? html`<a class="btn primary" href="${T.apiBase}/api/sessions/${S.id}/export/report.md">${icon("download")} Download Report (.md)</a>` : html`<a class="btn primary" href="#/intake">${icon("play")} Run evaluation</a>`}
+        <div class="col no-print" style="align-items:flex-end">
+          <div class="row wrap" style="justify-content:flex-end;gap:8px">
+            <button class="btn blue" data-act="reset-run" title="Remove previous run data and start a new evaluation">${icon("trash")} Remove Run &amp; Start New</button>
+            <a class="btn" href="#/report?tab=audit">${icon("hash")} View Audit Trail</a>
+            ${ran ? html`<a class="btn primary" href="${T.apiBase}/api/sessions/${S.id}/export/report.md">${icon("download")} Download Report (.md)</a>` : html`<a class="btn primary" href="#/intake">${icon("play")} Run evaluation</a>`}
+          </div>
           ${S.tender ? html`<span class="tiny muted mono">${icon("lock", "sm")} tender sha256 ${T.short(S.tender.sha256, 12)}</span>` : ""}</div></div>
         <div class="tiles stagger">
           <div class="tile"><div class="l">Selection method</div><div class="v">${R ? "QCBS " + Math.round(R.weights.technical * 100) + ":" + Math.round(R.weights.financial * 100) : "-"}</div><div class="s">${R ? R.financial_method.slice(0, 48) : ""}</div></div>
@@ -80,8 +84,22 @@
       ${ran ? html`<div class="card rise" style="margin-top:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">${icon("users", "lg")}<div class="grow"><b>${S.approval ? "Committee sign-off recorded" : "Committee sign-off pending"}</b><div class="small muted">${S.approval ? S.approval.decision + " by " + S.approval.by + " · seal " + T.short(S.approval.seal, 12) : S.blockers.length ? "Decisions required: recommended disqualification of " + S.blockers.join(", ") : "Review the ranking and record the committee decision."}</div></div>
         <a class="btn primary" href="#/ranking">${S.approval ? "View sign-off" : "Go to approval"} ${icon("chevron", "sm")}</a></div>` : ""}`;
   };
-  T.mounts.dashboard = (root) => {
+  T.mounts.dashboard = (root, S) => {
     root.querySelector("[data-act=demo]")?.addEventListener("click", () => T.loadDemo(true));
+    root.querySelector("[data-act=reset-run]")?.addEventListener("click", async () => {
+      if (!confirm("Are you sure you want to remove the previous evaluation run data and start a new evaluation?")) return;
+      try {
+        if (S && S.id) {
+          await T.api.del(`/api/sessions/${S.id}`);
+        }
+        T.state.session = null;
+        T.intake = { tender: null, bids: [], settings: null };
+        T.toast("Previous evaluation data removed.", "ok", 4000);
+        location.hash = "#/intake";
+      } catch (e) {
+        T.toast(e.message, "err", 5000);
+      }
+    });
   };
 
   // ================================================================ INTAKE
@@ -129,8 +147,12 @@
       <div class="row sbox" style="margin-top:16px"><button class="switch ${st.blind_technical ? "on" : ""}" id="s-blind" aria-label="Blind technical evaluation"></button>
         <div><b>Enforce blind technical evaluation</b><div class="small muted">Bidder names are replaced by Bidder-A, B, C… before the technical agent sees the text.</div></div></div></div>`;
 
-    return html`${T.head("New Evaluation Workflow", "Upload procurement documents, configure the reasoning parameters and convene the multi-agent committee.",
-      html`<button class="btn ghost" data-act="demo">${icon("sparkles")} Load demo data (Water Quality Monitoring tender)</button>`)}
+    const intakeActions = html`
+      ${S ? html`<button class="btn blue sm" data-act="reset-run">${icon("trash")} Remove Previous Run</button>` : ""}
+      <button class="btn ghost" data-act="demo">${icon("sparkles")} Load demo data (Water Quality Monitoring tender)</button>
+    `;
+
+    return html`${T.head("New Evaluation Workflow", "Upload procurement documents, configure the reasoning parameters and convene the multi-agent committee.", intakeActions)}
       ${H.mode !== "groq" ? html`<div class="alert bad rise" style="margin-bottom:16px">${icon("alert")}<div><b>API Key Required.</b> No <span class="mono">GROQ_API_KEY</span> is configured. Add your Groq API key to <span class="mono">.env</span> and restart the server to run evaluations.</div></div>` : ""}
       <div class="grid g2">${tenderCard}${bidsCard}</div><div style="margin-top:16px">${settings}</div>
       <div class="card rise" data-i="4" style="margin-top:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
@@ -141,6 +163,21 @@
 
   T.mounts.intake = (root, S) => {
     const I = T.intake, st = I.settings, rerender = () => T.render(true);
+    root.querySelector("[data-act=reset-run]")?.addEventListener("click", async () => {
+      if (!confirm("Are you sure you want to remove the previous evaluation run data and start a new evaluation?")) return;
+      try {
+        if (S && S.id) {
+          await T.api.del(`/api/sessions/${S.id}`);
+        }
+        T.state.session = null;
+        I.tender = null;
+        I.bids = [];
+        T.toast("Previous evaluation data removed.", "ok", 4000);
+        T.render();
+      } catch (e) {
+        T.toast(e.message, "err", 5000);
+      }
+    });
     const setTender = (f) => { if (f) { I.tender = { name: f.name, size: f.size, file: f }; rerender(); } };
     const addBids = (files) => {
       [...files].forEach((f) => I.bids.push({ file: f, name: f.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim(), submitted: nowLocal() }));
