@@ -11,7 +11,6 @@ os.environ["GROQ_API_KEY"] = "test-key"
 
 from app import llm as llm_mod  # noqa: E402
 from app.demo_data import build_demo  # noqa: E402
-from app.mock_engine import mock_json  # noqa: E402
 from app.agents import compliance, parser  # noqa: E402
 
 
@@ -35,8 +34,14 @@ class FakeClient:
         if self.reject and "response_format" in kw:
             raise RuntimeError("400 response_format json not supported")
         user = kw["messages"][-1]["content"]
-        agent = "TenderParser" if "Tender No" in user else "Compliance"
-        out = json.dumps(mock_json(agent, "", user))
+        if "Tender No" in user:
+            data = {"tender_id": "PHED/IOT/2026/017", "title": "Water Quality",
+                    "eligibility": [{"id": f"E{i}", "title": f"Rule {i}", "requirement": "Required", "evidence": "Doc"} for i in range(1, 8)],
+                    "technical": [{"id": f"T{i}", "criterion": f"Criteria {i}", "weight": 20, "description": "Desc"} for i in range(1, 6)],
+                    "scoring_formula": "QCBS", "min_technical_score": 60}
+        else:
+            data = {"results": [{"id": f"E{i}", "status": "PASS", "evidence_quote": "Valid", "reason": "Meets criteria"} for i in range(1, 8)]}
+        out = json.dumps(data)
         return _resp(("Here is the JSON:\n" + out + "\nDone.") if self.wrap else out)
 
 

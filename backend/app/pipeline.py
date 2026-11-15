@@ -14,8 +14,6 @@ def _timed(s: Session, sid: str, fn):
     s.set_stage(sid, "running", "Working...")
     t0 = time.time()
     summary = fn()
-    if s.mode == "demo":
-        time.sleep(config.DEMO_STAGE_DELAY)       # cosmetic: lets the live progress animation be seen
     s.set_stage(sid, "done", summary, time.time() - t0)
 
 
@@ -28,7 +26,7 @@ def run_pipeline(s: Session):
         s.emit("started")
         llm = LLM(s.mode, s.settings["model"], s.settings["reasoning_effort"], on_event=s.add_audit)
         s.add_audit("System", "pipeline_started", {
-            "mode": s.mode, "model": s.settings["model"] if s.mode == "groq" else "offline-demo-engine",
+            "mode": s.mode, "model": s.settings["model"],
             "bids": list(s.bids), "tender_sha256": s.tender["sha256"], "settings": s.settings})
         names = list(s.bids)
         s.aliases = technical.make_aliases(names)

@@ -45,7 +45,7 @@
           <td>${r.rank === 1 ? pill("navy", "Recommended L1") : T.statusPill(r.status, r.status === "QUALIFIED" ? `Rank L${r.rank}` : r.status_label.split(" - ")[0])}</td></tr>`; })}</tbody></table></div></div>` : "";
 
     const agents = html`<div><div class="sec-h rise"><div class="grow"><h2>Autonomous Evaluation Agents</h2><div class="sub">Each agent shows measured latency and model usage from this run.</div></div>
-      ${pill(S.mode === "groq" ? "blue" : "amber", S.mode === "groq" ? "Groq · " + S.settings.model : "Offline demo engine (rule-based)")}</div>
+      ${pill("blue", "Groq · " + S.settings.model)}</div>
       <div class="agents stagger">${AGENTS.map((a) => { const st = stages.find((x) => x.id === a.id) || {}, ag = a.stat && S.agent_stats[a.stat];
         return html`<div class="card hover agent ${st.status}"><div class="top2"><div class="ai">${icon(a.ico)}</div><b>${a.name}</b><span class="lat">${st.seconds != null ? st.seconds + "s" : st.status === "running" ? "running" : "-"}</span></div>
           <p>${a.desc}</p><div class="meta"><span>${pill(st.status === "done" ? "green" : st.status === "error" ? "red" : st.status === "running" ? "blue" : "gray", st.status === "done" ? "Completed" : st.status, "dot")}</span>
@@ -54,7 +54,7 @@
 
     return html`
       <div class="card rise"><div class="hero"><div>
-        <div class="row wrap">${pill("navy", "Tender No: " + (R?.tender_id || "-"))}${pill("blue", S.mode === "groq" ? "LLM: " + S.settings.model : "Offline demo engine")}${S.settings.blind_technical ? pill("blue", "Blind technical evaluation") : ""}</div>
+        <div class="row wrap">${pill("navy", "Tender No: " + (R?.tender_id || "-"))}${pill("blue", "LLM: " + S.settings.model)}${S.settings.blind_technical ? pill("blue", "Blind technical evaluation") : ""}</div>
         <h1>${R?.title || S.tender?.filename || "Untitled tender"}</h1>
         <div class="muted">${R?.issuer || "Documents staged. Run the evaluation to extract the rubric."}</div></div>
         <div class="col no-print" style="align-items:flex-end"><a class="btn" href="#/report?tab=audit">${icon("hash")} View Audit Trail</a>
@@ -115,9 +115,9 @@
 
     const settings = html`<div class="card rise" data-i="3"><div class="sec-h"><div class="grow"><h2>${icon("cpu")} Evaluation Hyperparameters & Guards</h2></div></div>
       <div class="sg">
-        <div class="sbox"><h4>LLM reasoning model ${pill(H.mode === "groq" ? "green" : "amber", H.mode === "groq" ? "Groq connected" : "Demo engine")}</h4>
+        <div class="sbox"><h4>LLM reasoning model ${pill(H.mode === "groq" ? "green" : "red", H.mode === "groq" ? "Groq connected" : "Key required")}</h4>
           <select class="select" id="s-model">${H.models.map((m) => html`<option value="${m}" ${st.model === m ? "selected" : ""}>${m}${m.endsWith("120b") ? " (recommended)" : ""}</option>`)}</select>
-          <div class="tiny muted" style="margin-top:6px">${H.mode === "groq" ? "Requests go to the Groq API with your key." : "No GROQ_API_KEY found: a rule-based offline engine runs instead of an LLM. Add the key to .env to use gpt-oss."}</div></div>
+          <div class="tiny muted" style="margin-top:6px">${H.mode === "groq" ? "Requests go to the Groq API with your key." : "No GROQ_API_KEY found: please add your key to .env to run evaluations."}</div></div>
         <div class="sbox"><h4>Reasoning effort <span class="small muted" id="eff-l">${st.reasoning_effort}</span></h4>
           <div class="seg" id="s-effort">${["low", "medium", "high"].map((e) => html`<button data-v="${e}" class="${st.reasoning_effort === e ? "on" : ""}">${e[0].toUpperCase() + e.slice(1)}</button>`)}</div>
           <div class="tiny muted" style="margin-top:6px">Higher effort = deeper reasoning per call, slower and costlier.</div></div>
@@ -131,7 +131,7 @@
 
     return html`${T.head("New Evaluation Workflow", "Upload procurement documents, configure the reasoning parameters and convene the multi-agent committee.",
       html`<button class="btn ghost" data-act="demo">${icon("sparkles")} Load demo data (Water Quality Monitoring tender)</button>`)}
-      ${H.mode === "demo" ? html`<div class="alert warn rise" style="margin-bottom:16px">${icon("info")}<div><b>Offline demo mode.</b> No <span class="mono">GROQ_API_KEY</span> is configured, so a rule-based engine stands in for the LLM. The pipeline, UI, audit trail and approvals are real; scores come from simple heuristics. Add your key to <span class="mono">.env</span> and restart to use gpt-oss via Groq.</div></div>` : ""}
+      ${H.mode !== "groq" ? html`<div class="alert bad rise" style="margin-bottom:16px">${icon("alert")}<div><b>API Key Required.</b> No <span class="mono">GROQ_API_KEY</span> is configured. Add your Groq API key to <span class="mono">.env</span> and restart the server to run evaluations.</div></div>` : ""}
       <div class="grid g2">${tenderCard}${bidsCard}</div><div style="margin-top:16px">${settings}</div>
       <div class="card rise" data-i="4" style="margin-top:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
         <div class="grow small muted">${icon("lock", "sm")} A tamper-evident audit record is generated from the moment you run.</div>

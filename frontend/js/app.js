@@ -33,10 +33,10 @@
     const st = !S ? ["gray", "No evaluation"] : S.status === "running" ? ["blue", "Committee in session"] : S.status === "error" ? ["red", "Error"] : A ? (A.decision === "APPROVED" ? ["green", "Approved"] : ["red", "Rejected"]) : S.status === "complete" ? ["amber", "Awaiting sign-off"] : ["gray", "Documents staged"];
     const off = T.officer() || "Evaluation Officer", ini = off.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
     document.getElementById("top").innerHTML = `<span class="tid"><small>Tender ID</small>${T.esc(S?.rubric?.tender_id || "-")}</span><span class="ttl">${T.esc(S?.rubric?.title || S?.tender?.filename || "No tender loaded")}</span>
-      ${pill(st[0], st[1], "dot " + (S?.status === "running" ? "live" : "")).s}${pill(H?.mode === "groq" ? "blue" : "amber", H?.mode === "groq" ? "Groq · gpt-oss" : "Demo engine").s}
+      ${pill(st[0], st[1], "dot " + (S?.status === "running" ? "live" : "")).s}${pill(H?.mode === "groq" ? "blue" : "amber", H?.mode === "groq" ? "Groq · gpt-oss" : "API key required").s}
       <button class="officer" id="officer" title="Set your name for audit records"><div><b>${T.esc(off)}</b><span>Senior Evaluation Officer</span></div><div class="avatar">${T.esc(ini || "EO")}</div></button>`;
     document.getElementById("officer").onclick = () => { const n = prompt("Your name (recorded on rulings, notes and sign-off):", T.officer()); if (n !== null) { T.setOfficer(n.trim()); T.refreshChrome(); } };
-    document.getElementById("side-foot").innerHTML = `<span>${icon("cpu", "sm").s} ${H?.mode === "groq" ? T.esc(S?.settings?.model || H.model) : "Offline demo engine"}</span><span>${icon("hash", "sm").s} Audit chain: SHA-256</span><span class="tiny">Session ${T.esc(S?.id || "-")} · v1.0</span>`;
+    document.getElementById("side-foot").innerHTML = `<span>${icon("cpu", "sm").s} ${H?.mode === "groq" ? T.esc(S?.settings?.model || H.model) : "Groq API key required"}</span><span>${icon("hash", "sm").s} Audit chain: SHA-256</span><span class="tiny">Session ${T.esc(S?.id || "-")} · v1.0</span>`;
   };
 
   // ---------------------------------------------------------------- demo loader
@@ -75,7 +75,7 @@
     const layer = document.getElementById("layer"), ov = document.createElement("div");
     ov.className = "overlay"; ov.id = "run-overlay";
     ov.innerHTML = `<div class="runcard"><div class="rhead"><div class="orb" id="r-orb"></div><div class="grow"><h2 id="r-title" style="font-size:21px">Convening the committee…</h2>
-        <div class="small" style="opacity:.8" id="r-sub">${mode === "groq" ? "Calling " + T.esc(settings?.model || "gpt-oss") + " on Groq" : "Running on the offline demo engine (no API key)"}</div></div><span class="pill navy" style="background:rgba(255,255,255,.15)" id="r-pct">0%</span></div>
+        <div class="small" style="opacity:.8" id="r-sub">${"Calling " + T.esc(settings?.model || "gpt-oss") + " on Groq"}</div></div><span class="pill navy" style="background:rgba(255,255,255,.15)" id="r-pct">0%</span></div>
       <div class="rbody"><div class="rsteps">${STAGES.map(([id, l], i) => `<div class="rstep" data-s="${id}"><div class="rn">${i + 1}</div><div><div class="rt">${l}</div><div class="rs"></div></div></div>`).join("")}</div>
       <div class="term" id="r-term"><div class="ln"><span class="tg">system</span><span>Connecting to the evaluation stream<span class="caret"></span></span></div></div></div>
       <div class="rfoot"><div class="bar-track"><div class="bar-fill" id="r-bar" style="width:0"></div></div><button class="btn primary" id="r-close" hidden>Open dashboard ${icon("chevron", "sm").s}</button></div></div>`;

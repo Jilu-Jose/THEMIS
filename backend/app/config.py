@@ -20,11 +20,7 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
 DEFAULT_MODEL = os.getenv("THEMIS_MODEL", "openai/gpt-oss-120b")
 MODELS = ["openai/gpt-oss-120b", "openai/gpt-oss-20b"]
 
-# THEMIS_DEMO=1 forces the offline rule-based engine even when a key is present.
-FORCE_DEMO = os.getenv("THEMIS_DEMO", "0") == "1"
-# Cosmetic pause per stage in demo mode so the live progress animation is visible.
-DEMO_STAGE_DELAY = float(os.getenv("THEMIS_DEMO_DELAY", "0.9"))
-
+# Default settings for evaluation sessions
 DEFAULT_SETTINGS = {
     "model": DEFAULT_MODEL,
     "reasoning_effort": "medium",      # low | medium | high
@@ -36,5 +32,5 @@ DEFAULT_SETTINGS = {
 
 
 def llm_mode() -> str:
-    """'groq' when a key is configured and demo is not forced, else 'demo'."""
-    return "groq" if (GROQ_API_KEY and not FORCE_DEMO) else "demo"
+    """'groq' when GROQ_API_KEY is configured, else 'unconfigured'."""
+    return "groq" if GROQ_API_KEY else "unconfigured"

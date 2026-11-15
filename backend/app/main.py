@@ -141,6 +141,8 @@ def run(sid: str, body: RunBody | None = None):
         raise HTTPException(409, "Evaluation already running.")
     if not s.tender or not s.bids:
         raise HTTPException(400, "Session has no documents.")
+    if not config.GROQ_API_KEY:
+        raise HTTPException(400, "GROQ_API_KEY is required to run the evaluation. Please configure your key in .env.")
     st = dict(s.settings)
     for k, v in ((body.settings if body else None) or {}).items():
         if k in config.DEFAULT_SETTINGS:
