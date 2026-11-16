@@ -8,7 +8,7 @@ from datetime import datetime
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, Response, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -355,4 +355,20 @@ def export(sid: str, kind: str):
 
 # ------------------------------------------------------------------ frontend (must be last)
 if config.FRONTEND_DIR.exists():
+    @app.get("/", response_class=FileResponse)
+    def root_landing():
+        landing_file = config.FRONTEND_DIR / "landing.html"
+        if landing_file.exists():
+            return FileResponse(landing_file)
+        return FileResponse(config.FRONTEND_DIR / "index.html")
+
+    @app.get("/landing.html", response_class=FileResponse)
+    def landing_page():
+        return FileResponse(config.FRONTEND_DIR / "landing.html")
+
+    @app.get("/app", response_class=FileResponse)
+    @app.get("/index.html", response_class=FileResponse)
+    def app_page():
+        return FileResponse(config.FRONTEND_DIR / "index.html")
+
     app.mount("/", StaticFiles(directory=config.FRONTEND_DIR, html=True), name="frontend")

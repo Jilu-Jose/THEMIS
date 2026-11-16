@@ -12,9 +12,17 @@ except Exception:  # python-dotenv is optional
 BACKEND_DIR = Path(__file__).resolve().parents[1]
 ROOT_DIR = BACKEND_DIR.parent
 FRONTEND_DIR = ROOT_DIR / "frontend"
-DATA_DIR = Path(os.getenv("THEMIS_DATA_DIR", BACKEND_DIR / "data"))
+if os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"):
+    DATA_DIR = Path(os.getenv("THEMIS_DATA_DIR", "/tmp/themis_data"))
+else:
+    DATA_DIR = Path(os.getenv("THEMIS_DATA_DIR", BACKEND_DIR / "data"))
 SESSIONS_DIR = DATA_DIR / "sessions"
-SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
+try:
+    SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
+except Exception:
+    DATA_DIR = Path("/tmp/themis_data")
+    SESSIONS_DIR = DATA_DIR / "sessions"
+    SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
 DEFAULT_MODEL = os.getenv("THEMIS_MODEL", "openai/gpt-oss-120b")
